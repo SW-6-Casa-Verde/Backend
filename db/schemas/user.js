@@ -1,6 +1,8 @@
 const { Schema } = require('mongoose');
 const userId = require('./types/short-id');
 
+const userRole = ['USER', 'SELLER', 'ADMIN'];
+
 const UserSchema = new Schema({
     user_id: userId,
     user_email: { 
@@ -18,6 +20,8 @@ const UserSchema = new Schema({
     },
     user_role: { 
         type: String, 
+        enum: userRole,
+        default: 'USER',
         required: true 
     },
     user_image: { 
