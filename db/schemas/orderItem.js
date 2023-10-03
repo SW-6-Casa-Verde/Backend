@@ -15,7 +15,6 @@ const OrderItemSchema = new Schema({
 		type: Number, 
 		required: true 
 	},
-	// order_item_discount_rate: { type: Number, required: true },
 	order_id: { 
 		type: Schema.Types.ObjectId, 
 		ref: 'Order', 
