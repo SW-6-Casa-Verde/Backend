@@ -1,12 +1,8 @@
-const { Schema } = require('mongoose');
+import { Schema } from 'mongoose';
+import itemId from './types/short-id';
 
 const ItemSchema = new Schema({
-    id: {
-        type: Number,
-        required: true,
-        unique: true,
-        index: true,
-    },
+    id: itemId,
     name: {
         type: String,
         required: true,
