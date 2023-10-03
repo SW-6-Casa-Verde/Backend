@@ -4,6 +4,8 @@ const ItemSchema = new Schema({
   item_id: {
     type: Number,
     required: true,
+    unique: true,
+    index: true,
   },
   item_name: {
     type: String,
