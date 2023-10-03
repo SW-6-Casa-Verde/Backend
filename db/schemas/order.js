@@ -1,8 +1,8 @@
 const { Schema } = require('mongoose');
-const order_id = require('./types/short-id');
+const orderId = require('./types/short-id');
 
-const orderSchema = new Schema({
-	order_id,
+const OrderSchema = new Schema({
+	order_id: orderId,
 	order_total_price: { 
 		type: Number, 
 		required: true
@@ -36,4 +36,4 @@ const orderSchema = new Schema({
 	timestamps: true // createdAt 및 updatedAt 필드 추가
 });
 
-module.exports = orderSchema
+module.exports = OrderSchema;

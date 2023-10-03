@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 
-const orderItemSchema = new Schema({
+const OrderItemSchema = new Schema({
 	order_item_id: { 
 		type: Number, 
 		required: true, 
@@ -27,4 +27,4 @@ const orderItemSchema = new Schema({
 	},
 });
 
-module.exports = orderItemSchema
+module.exports = OrderItemSchema;
