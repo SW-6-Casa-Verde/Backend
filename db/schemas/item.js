@@ -20,7 +20,7 @@ const ItemSchema = new Schema({
         required: true,
     },
     images: [ String ], // 상세 이미지
-    category_id: {
+    category_id: { // id만 가져오는 게 아니라 오브젝트 자체를 가져오니까 그냥 "category"가 맞을 것 같아요!
         type: Schema.Types.ObjectId,
         ref: 'Category',
         required: true,
