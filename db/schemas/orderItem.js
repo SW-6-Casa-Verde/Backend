@@ -4,7 +4,8 @@ const OrderItemSchema = new Schema({
 	order_item_id: { 
 		type: Number, 
 		required: true, 
-		unique: true 
+		unique: true ,
+		index: true,
 	},
 	order_item_quantity: { 
 		type: Number, 
