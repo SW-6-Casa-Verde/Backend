@@ -1,4 +1,4 @@
-const { Schema } = require('mongoose');
+import { Schema } from 'mongoose';
 
 const OrderItemSchema = new Schema({
 	id: { 
