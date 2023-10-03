@@ -1,30 +1,33 @@
 const { Schema } = require('mongoose');
 const orderId = require('./types/short-id');
 
+const orderStatus = ['ORDER_CONFIRMED', 'PREPARING_FOR_SHIPMENT', 'SHIPPED', 'DELIVERED'];
+
 const OrderSchema = new Schema({
-	order_id: orderId,
-	order_total_price: { 
+	id: orderId,
+	total_price: { 
 		type: Number, 
 		required: true
 	},
-	order_receiver_name: { 
+	name: { 
 		type: String,
 		required: true
 	},
-	order_receiver_address: { 
+	address: { 
 		type: String,
 		required: true 
 	},
-	order_receiver_phone: { 
+	phone: { 
 		type: String, 
 		required: true 
 	},
-	order_receiver_request: {
+	request: {
 		type: String
 	},
 	order_status_id: { 
-		type: Schema.Types.ObjectId, 
-		ref: 'OrderStatus', 
+		type: String, 
+		enum: orderStatus,
+        default: 'ORDER_CONFIRMED',
 		required: true
 	},
 	user_id: { 
