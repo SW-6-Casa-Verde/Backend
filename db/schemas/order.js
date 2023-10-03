@@ -1,5 +1,5 @@
-const { Schema } = require('mongoose');
-const orderId = require('./types/short-id');
+import { Schema } from 'mongoose';
+import orderId from './types/short-id';
 
 const orderStatus = ['ORDER_CONFIRMED', 'PREPARING_FOR_SHIPMENT', 'SHIPPED', 'DELIVERED'];
 

@@ -1,5 +1,5 @@
-const { Schema } = require('mongoose');
-const itemId = require('./types/short-id');
+import { Schema } from 'mongoose';
+import itemId from './types/short-id';
 
 const ItemSchema = new Schema({
     id: itemId,

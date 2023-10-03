@@ -1,4 +1,4 @@
-const { nanoid } = require('nanoid');
+import { nanoid } from 'nanoid';
 
 const shortId = {
     type: String,

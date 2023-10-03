@@ -1,5 +1,5 @@
-const { Schema } = require('mongoose');
-const userId = require('./types/short-id');
+import { Schema } from 'mongoose';
+import userId from './types/short-id';
 
 const userRole = ['USER', 'ADMIN'];
 
