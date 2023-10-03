@@ -1,6 +1,6 @@
 const { Schema } = require('mongoose');
 
-const PostSchema = new Schema({
+const ItemSchema = new Schema({
   item_id: {
     type: Number,
     required: true,
@@ -34,4 +34,4 @@ const PostSchema = new Schema({
   }
 })
 
-module.exports = PostSchema;
+module.exports = ItemSchema;
