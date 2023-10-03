@@ -24,7 +24,7 @@ const OrderSchema = new Schema({
 	request: {
 		type: String
 	},
-	order_status_id: { 
+	order_status: { 
 		type: String, 
 		enum: orderStatus,
         default: 'ORDER_CONFIRMED',
