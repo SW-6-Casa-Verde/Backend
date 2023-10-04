@@ -1,3 +1,3 @@
-const userRole = ['USER', 'ADMIN'];
+const userRole = ["USER", "ADMIN"];
 
-export { userRole }
+export { userRole };
