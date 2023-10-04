@@ -24,4 +24,4 @@ mongoose.connection.on('connected', () => {
 //     ])
 // }
 
-boot();
+// boot();

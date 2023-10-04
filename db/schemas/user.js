@@ -1,10 +1,13 @@
 import { Schema } from 'mongoose';
-import userId from './types/short-id';
-
-const userRole = ['USER', 'ADMIN'];
+import randStr from '../../utils/randomString';
+import { userRole } from '../../constants';
 
 const UserSchema = new Schema({
-    id: userId,
+    // 내부적 유저 식별 필드
+    id: { 
+        type: String, 
+        unique: true 
+    },
     email: { 
         type: String, 
         required: true, 
@@ -18,16 +21,18 @@ const UserSchema = new Schema({
         type: String, 
         required: true 
     },
+    phone: {
+        type: String, 
+        required: true
+    },
+    name: {
+        type: String, 
+        default: () => `${randStr(7)}-user`
+    },
     role: { 
         type: String, 
-        enum: userRole,
-        default: 'USER',
-        required: true 
-    },
-    user_image: { 
-        type: String, 
-        default: '기본이미지' 
+        enum: userRole
     },
 });
 
-module.exports = UserSchema;
+export default UserSchema;
