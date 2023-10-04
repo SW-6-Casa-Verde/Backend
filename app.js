@@ -7,6 +7,8 @@ import dbBoot from "./db";
 
 import indexRouter from "./routes";
 import usersRouter from "./routes/users";
+//orderRouter
+import orderRouter from "./routes/order";
 
 const app = express();
 
@@ -23,6 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 // 라우터 등록
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+app.use("/order", orderRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
