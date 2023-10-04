@@ -33,19 +33,10 @@ router.post(
   "/sign-up",
   asyncHandler(async (req, res, next) => {
     // 유효성 검사
-    const { error, value } = validateUser(req.body);
-    // const { email, password, address, phone, name } = req.body;
-    // const usr = {
-    //     "email": "hell1@gmail.com",
-    //     "password": "hell1hell1",
-    //     "address": "서울특별시 구구 동동",
-    //     "phone": "010-0000-0000",
-    //     "name": ""
-    // }
-    const usr = req.body;
-    // if (!error) throw { status: 422, message:'요청한 값을 다시 확인해주세요.' };
+    const { error, value } = await validateUser(req.body);
+    if (error) throw { status: 422, message: "요청한 값을 다시 확인해주세요." };
 
-    const newUser = await UserService.addUser(usr);
+    const newUser = await UserService.addUser(value);
     if (newUser.errorMessage) {
       const { status, errorMessage } = newUser;
       throw { status: status, message: errorMessage };
