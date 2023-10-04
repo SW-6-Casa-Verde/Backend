@@ -1,7 +1,7 @@
 import { Router } from "express";
 import UserService from "../services/userService";
 import asyncHandler from "../utils/asyncHandler";
-//import validator from '../validators/userValidator';
+import validateUser from "../validators/userValidator";
 const router = Router();
 
 // 회원 가입 페이지 이동 ? (이거는 안쓸거같은데)
@@ -32,7 +32,8 @@ router.post(
 router.post(
   "/sign-up",
   asyncHandler(async (req, res, next) => {
-    // 유효성 검사 (joi)
+    // 유효성 검사
+    const { error, value } = validateUser(req.body);
     // const { email, password, address, phone, name } = req.body;
     // const usr = {
     //     "email": "hell1@gmail.com",
