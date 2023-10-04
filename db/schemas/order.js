@@ -7,6 +7,7 @@ const orderStatus = [
   "SHIPPED",
   "DELIVERED",
 ];
+const payMethod = ["CARD", "BANK_TRANSFER"];
 
 const OrderSchema = new Schema(
   {
@@ -30,6 +31,12 @@ const OrderSchema = new Schema(
     request: {
       type: String,
     },
+    pay_Method: {
+      type: String,
+      enum: payMethod,
+      default: "CARD",
+      require: true,
+    },
     order_status: {
       type: String,
       enum: orderStatus,
@@ -44,7 +51,7 @@ const OrderSchema = new Schema(
   },
   {
     timestamps: true, // createdAt 및 updatedAt 필드 추가
-  },
+  }
 );
 
 module.exports = OrderSchema;

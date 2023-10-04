@@ -25,7 +25,7 @@ router.post(
     res
       .status(200)
       .json({ status: 200, message: "사용 가능한 이메일 주소입니다." });
-  }),
+  })
 );
 
 // 회원 가입 요청
@@ -53,7 +53,7 @@ router.post(
     res
       .status(200)
       .json({ status: 200, message: "회원 가입이 완료되었습니다." });
-  }),
+  })
 );
 
 export default router;
