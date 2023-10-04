@@ -2,6 +2,7 @@ import { Schema } from 'mongoose';
 import orderId from './types/short-id';
 
 const orderStatus = ['ORDER_CONFIRMED', 'PREPARING_FOR_SHIPMENT', 'SHIPPED', 'DELIVERED'];
+const payMethod = ['CARD', 'BANK_TRANSFER']
 
 const OrderSchema = new Schema({
 	id: orderId,
@@ -23,6 +24,12 @@ const OrderSchema = new Schema({
 	},
 	request: {
 		type: String
+	},
+	pay_Method: { 
+		type: String, 
+		enum: payMethod,
+		default: 'CARD',
+		require: true
 	},
 	order_status: { 
 		type: String, 
