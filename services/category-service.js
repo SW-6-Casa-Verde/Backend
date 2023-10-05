@@ -1,5 +1,5 @@
 import { model } from "mongoose";
-import { Category } from "../db/models/Category";
+import { Category } from "../db/models/category";
 
 class CategoryService {
   // Create

@@ -1,5 +1,5 @@
 import { Item } from "../db/models/Item"; // db/index.js 완성되면 바꾸기 -> ../db
-import { Category } from "../db/models/Category"; // db/index.js 완성되면 바꾸기 -> ../db
+import { Category } from "../db/models/category"; // db/index.js 완성되면 바꾸기 -> ../db
 
 class itemService {
   // Create

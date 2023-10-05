@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { CategoryService } from "../services/categoryService";
+import { CategoryService } from "../services/category-service";
 import { itemRouter } from "./items";
 import asyncHandler from "../utils/asyncHandler";
 
