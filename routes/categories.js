@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { CategoryService } from "../services/categoryService";
+import { itemRouter } from "./items";
 import asyncHandler from "../utils/asyncHandler";
 
 const categoryRouter = Router();
@@ -53,10 +54,7 @@ categoryRouter.put(
       };
     }
 
-    const category = await CategoryService.setCategory(
-      { category_id },
-      { id, name }
-    );
+    const category = await CategoryService.setCategory({ category_id }, { id, name });
 
     if (category.errorMessage) {
       throw { status: 409, message: category.errorMessage };
@@ -79,6 +77,24 @@ categoryRouter.delete(
 
     res.status(200).json({ message: "success " });
   })
+);
+
+// 상품 라우터 연결
+categoryRouter.get(
+  "/:category_id/items",
+  asyncHandler(async (req, res, next) => {
+    const { category_id } = req.params;
+
+    const category = await CategoryService.getCategory({ category_id });
+
+    if (!category) {
+      throw { status: 404, message: "해당 카테고리가 존재하지 않습니다." };
+    }
+
+    req.category = category;
+    next();
+  }),
+  itemRouter
 );
 
 export { categoryRouter };

@@ -40,14 +40,7 @@ class itemService {
   }
 
   // 카테고리별 상품 & sort
-  static async getItemsByCategory({ category_id }, page, perPage, sortQuery) {
-    const category = await Category.findById({ category_id });
-
-    if (!category) {
-      const errorMessage = "카테고리가 존재하지 않습니다.";
-      return { errorMessage };
-    }
-
+  static async getItemsByCategory({ category }, page, perPage, sortQuery) {
     const [items, totalPage] = await Item.findByCategory({ category }, page, perPage, sortQuery);
 
     if (!items) {
