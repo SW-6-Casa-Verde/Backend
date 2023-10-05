@@ -9,13 +9,18 @@ class Order {
     return orders;
   }
 
-  static async create({ newOrder }) {
-    const createdNewOrder = await OrderModel.create({ newOrder });
+  static async create(newOrder) {
+    const createdNewOrder = await OrderModel.create(newOrder);
     return createdNewOrder;
   }
 
-  static async findById({ order_id }) {
-    const order = await OrderModel.findOne({ order_id });
+  static async findByOrderId({ order_id }) {
+    const order = await OrderModel.findOne({ id: order_id });
+    return order;
+  }
+
+  static async findByUserId({ userId }) {
+    const order = await OrderModel.findOne({ user_id: userId });
     return order;
   }
 
@@ -35,4 +40,4 @@ class Order {
   }
 }
 
-export { Order };
+export { Order, OrderModel };

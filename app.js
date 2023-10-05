@@ -7,7 +7,6 @@ import dbBoot from "./db";
 
 import indexRouter from "./routes";
 import usersRouter from "./routes/users";
-//orderRouter
 import orderRouter from "./routes/order";
 
 const app = express();

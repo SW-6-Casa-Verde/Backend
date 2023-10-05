@@ -2,42 +2,58 @@ import { Order, OrderModel } from "../db/models/order";
 
 class OrderService {
   // 사용자
-  static async newOrder(data) {
-    const order = await Order.create(data);
-    if (!order) {
-      const errorMessage = "주문 정상적으로 접수되지않았습니다.";
-      return errorMessage;
+  static async addOrder(data) {
+    if (
+      !data.total_price ||
+      !data.name ||
+      !data.address ||
+      !data.phone ||
+      !data.user_id
+    ) {
+      throw { status: 422, message: "주문 정보가 올바르지 않습니다." };
     }
+
+    const order = await Order.create(data);
+
+    if (!order) {
+      throw {
+        status: 500,
+        message: "주문을 생성하는 동안 오류가 발생했습니다.",
+      };
+    }
+
     return order;
   }
 
   static async getOrder(data, page) {
     //data : user or admin
-    const order = await Order.findAll();
     const perPage = 10;
-    if (!order) {
-      const errorMessage = "주문 내역이 없습니다.";
-      return errorMessage;
-    }
 
     if (data === "admin") {
       const total = await OrderModel.countDocuments({});
-      order
+      const orders = await Order.findAll()
         .sort({ createdAt: -1 })
         .skip(perPage * (page - 1))
         .limit(perPage);
 
       const totalPage = Math.ceil(total / perPage);
       //사용자별 구매목록은 router에서
+      if (!orders.length) {
+        throw new Error("주문 내역이 없습니다.");
+      }
 
-      return { totalPage, order };
+      return { totalPage, orders };
     } else {
       const orders = await Order.findByUserId(data);
+
+      if (!orders.length) {
+        throw new Error("사용자의 주문 내역이 없습니다.");
+      }
       return orders;
     }
   }
 
-  static async updateOrder(data) {
+  static async setOrder(data) {
     const { order_id, updateData, role } = data;
     const order = await Order.findByOrderId(order_id);
 
@@ -46,7 +62,7 @@ class OrderService {
       return errorMessage;
     }
 
-    if (role === "USER") {
+    if (role === "user") {
       if (
         order.order_status === "SHIPPED" ||
         order.order_status === "DELIVERED"
@@ -60,7 +76,7 @@ class OrderService {
         const orderUpdate = await Order.update(order_id, updateData);
         return orderUpdate;
       }
-    } else if (role === "ADMIN") {
+    } else if (role === "admin") {
       const orderStatus = await Order.update(order_id, updateData);
       return orderStatus;
     }
@@ -68,24 +84,31 @@ class OrderService {
     // admin 수정가능 주문상태
   }
 
-  static async CancelOrder(data) {
-    const { order_id, role } = data;
+  static async deleteOrder(data) {
+    const { order_id, role, currentId } = data;
+    const order = await Order.findByOrderId(order_id);
 
-    if (role === "USER" || role == "ADMIN") {
-      const order = await Order.findByOrderId(order_id);
+    if (!order) {
+      const errorMessage = "주문 내역이 없습니다.";
+      return errorMessage;
+    }
 
-      if (!order) {
-        const errorMessage = "주문 내역이 없습니다.";
+    if (role === "user") {
+      if (order.user_id !== currentId) {
+        const errorMessage = "주문 취소 권한이 없습니다.";
         return errorMessage;
       }
 
       await Order.delete({ order_id });
       const cancelMessage = "주문이 취소되었습니다.";
       return cancelMessage;
-    } else {
-      const errorMessage = "주문 취소 권한이 없습니다.";
-      return errorMessage;
+    } else if (role === "admin") {
+      await Order.delete({ order_id });
+      const cancelMessage = "주문이 취소되었습니다.";
+      return cancelMessage;
     }
+    const errorMessage = "비회원은 접근할 수 없습니다.";
+    return errorMessage;
   }
 }
 
