@@ -4,8 +4,16 @@ import { Category } from "../db/models/Category";
 class CategoryService {
   // Create
   static async addCategory({ id, name }) {
+    const category = Category.findById({ id });
+
+    if (category) {
+      const errorMessage = "해당 아이디가 이미 존재합니다.";
+      return { errorMessage };
+    }
+
     const newCategory = { id, name };
     const createdNewCategory = await Category.create({ newCategory });
+
     return createdNewCategory;
   }
 
