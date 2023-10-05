@@ -12,4 +12,4 @@ const CategorySchema = new Schema({
   },
 });
 
-module.exports = CategorySchema;
+export { CategorySchema };
