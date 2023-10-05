@@ -3,8 +3,8 @@ import randStr from "../../utils/randomString";
 import { userRole } from "../../constants";
 
 const UserSchema = new Schema({
-  // 내부적 유저 식별 필드
-  id: {
+  // 유저 식별 필드
+  uuid: {
     type: String,
     unique: true,
   },

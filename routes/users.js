@@ -1,5 +1,5 @@
 import { Router } from "express";
-import UserService from "../services/userService";
+import UserService from "../services/user-service";
 import asyncHandler from "../utils/asyncHandler";
 import validateUser from "../validators/userValidator";
 import validateUserUpdate from "../validators/userUpdateValidator";
@@ -44,6 +44,7 @@ router.post(
 );
 
 // 사용자 정보 조회 (jwt 정보 활용 예정)
+// :uuid로 받고 role에 따라 분기 처리
 router.get(
   "/member",
   asyncHandler(async (req, res, next) => {
