@@ -16,15 +16,13 @@ class User {
     return await UserModel.findOne({ uuid });
   }
 
-  static async updateByUserId({ email, updateData }) {
-    // 토큰 구현 이후 email -> uuid
+  static async updateByUserId({ uuid, updateData }) {
     const update = { $set: updateData };
-    return await UserModel.findOneAndUpdate({ email }, update);
+    return await UserModel.findOneAndUpdate({ uuid }, update);
   }
 
   static async deleteByUserId(uuid) {
-    // 토큰 구현 이후 email -> uuid
-    return await UserModel.findOneAndRemove({ email: uuid });
+    return await UserModel.findOneAndRemove({ uuid });
   }
 }
 

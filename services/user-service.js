@@ -1,7 +1,6 @@
 import User from "../db/models/user";
 import bcrypt from "bcrypt";
-import { v4 as uuid } from "uuid";
-import { userRole } from "../constants";
+import { v4 as uuidv4 } from "uuid";
 
 class UserService {
   static async checkEmailDuplicate(email) {
@@ -30,12 +29,11 @@ class UserService {
 
     // 비밀번호 해쉬
     const hashedPassword = await bcrypt.hash(password, 10);
-    const uuid = uuid();
     let { address, phone, name } = newUser;
     name = !name ? undefined : name;
 
     const validatedUser = {
-      uuid,
+      uuid: uuidv4(),
       email,
       password: hashedPassword,
       address,
@@ -63,8 +61,7 @@ class UserService {
     return { uuid, email, address, phone, name };
   }
 
-  // 토큰 구현 이후 email -> uuid
-  static async setUserInfo({ email, value }) {
+  static async setUserInfo({ uuid, value }) {
     if ("role" in value && value.role !== "USER") {
       delete value.role;
     }
@@ -75,7 +72,7 @@ class UserService {
     }
 
     const updatedUserInfo = await User.updateByUserId({
-      email,
+      uuid,
       updateData: value,
     });
     if (!updatedUserInfo) {
