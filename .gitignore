@@ -26,6 +26,6 @@ test.js
 config.js
 secrets/
 
-# 기타 설정 파일 (IDE 등)
+# 기타 설정 파일 (IDE 등)  
 .idea/
 .vscode/

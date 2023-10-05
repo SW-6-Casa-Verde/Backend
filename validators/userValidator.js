@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 // Joi 스키마 정의
-const userJoiSchema = Joi.object({
+const orderJoiSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().required(),
   address: Joi.string().required(),
