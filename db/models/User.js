@@ -14,9 +14,23 @@ class User {
     return newUser;
   }
 
-  // static async findByUserId({ user_id }) {
-  //     const findId = await UserModel.findOne({ user_id });
-  // }
+  static async findByUserId(id) {
+    const findUser = await UserModel.findOne({ id });
+    return findUser;
+  }
+
+  static async updateByUserId({ email, updateData }) {
+    // 토큰 구현 이후 email -> id
+    const update = { $set: updateData };
+    const updateUser = await UserModel.findOneAndUpdate({ email }, update);
+    return updateUser;
+  }
+
+  static async deleteByUserId(userId) {
+    // 토큰 구현 이후 email -> id
+    const deleteUser = await UserModel.findOneAndRemove({ email: userId });
+    return deleteUser;
+  }
 }
 
 export default User;

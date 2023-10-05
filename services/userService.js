@@ -53,6 +53,40 @@ class UserService {
     // success
     return createNewUser;
   }
+
+  static async getUserInfo(userId) {
+    const getUser = await User.findByUserId(userId);
+    if (!getUser) {
+      const errorMessage = "사용자 조회에 실패하였습니다.";
+      return { status: 400, errorMessage };
+    }
+    return getUser;
+  }
+
+  // 토큰 구현 이후 email -> id
+  static async setUserInfo({ email, value }) {
+    // update role은 바뀌면 안됨!
+    // password는 바뀌면 암호화 해야함.
+
+    const updatedUserInfo = await User.updateByUserId({
+      email,
+      updateData: value,
+    });
+    if (!updatedUserInfo) {
+      const errorMessage = "사용자 정보 수정에 실패하였습니다.";
+      return { status: 400, errorMessage };
+    }
+    return updatedUserInfo;
+  }
+
+  static async deleteUser(userId) {
+    const delUser = await User.deleteByUserId(userId);
+    if (!delUser) {
+      const errorMessage = "사용자 삭제에 실패하였습니다.";
+      return { status: 400, errorMessage };
+    }
+    return delUser;
+  }
 }
 
 export default UserService;
