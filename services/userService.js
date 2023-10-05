@@ -13,10 +13,9 @@ class UserService {
     return isEmailUnique;
   }
 
-  // 이메일 중복 검증을 이미 했는지 확인하는 방법?
   static async addUser(newUser) {
     const { email, password } = newUser;
-    // 이메일 중복 검증
+    // 이메일 중복 검증 (더블 체크)
     const isEmailUnique = await this.checkEmailDuplicate(email);
     if (isEmailUnique) {
       const errorMessage = isEmailUnique.errorMessage;
@@ -60,13 +59,21 @@ class UserService {
       const errorMessage = "사용자 조회에 실패하였습니다.";
       return { status: 400, errorMessage };
     }
-    return getUser;
+    const { email, address, phone, name } = getUser;
+    const resData = { email, address, phone, name };
+    return resData;
   }
 
   // 토큰 구현 이후 email -> id
   static async setUserInfo({ email, value }) {
-    // update role은 바뀌면 안됨!
-    // password는 바뀌면 암호화 해야함.
+    if ("role" in value && value.role !== "USER") {
+      delete value.role;
+    }
+
+    if ("password" in value) {
+      const isPassword = await bcrypt.hash(value.password, 10);
+      value.password = isPassword;
+    }
 
     const updatedUserInfo = await User.updateByUserId({
       email,
