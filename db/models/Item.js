@@ -12,20 +12,16 @@ class Item {
   }
 
   // READ
-  static async findByCategory({ category_id }, sortQuery, page, perPage) {
-    const category = await CategorySchema.findOne({ id: category_id });
-    const itemList = await ItemModel.find({ category_id: category }).populate(
-      "category"
-    );
-
-    // 정렬
-    if (sortQuery) itemList = await itemList.sort(sortQuery);
-
-    // pagination
-    if (page && perPage) {
+  // 카테고리별 상품
+  static async findByCategory(query, page, perPage, sortQuery) {
+    // 정렬 X
+    if (!sortQuery) {
       const [total, items] = await Promise.all([
         ItemModel.countDocuments({}),
-        itemList.skip(perPage * (page - 1)).limit(perPage),
+        ItemModel.find(query)
+          .skip(perPage * (page - 1))
+          .limit(perPage)
+          .populate("category"),
       ]);
 
       const totalPage = Math.ceil(total / perPage);
@@ -33,10 +29,22 @@ class Item {
       return [items, totalPage];
     }
 
-    // pagenation 필요 없을 떄
-    return [itemList, null];
+    // 정렬 O
+    const [total, items] = await Promise.all([
+      ItemModel.countDocuments({}),
+      ItemModel.find(query)
+        .sort(sortQuery)
+        .skip(perPage * (page - 1))
+        .limit(perPage)
+        .populate("category"),
+    ]);
+
+    const totalPage = Math.ceil(total / perPage);
+
+    return [items, totalPage];
   }
 
+  // 상품 한 개
   static async findById(id) {
     const item = await ItemModel.findOne({ id }).populate("category");
     return item;
@@ -44,9 +52,7 @@ class Item {
 
   // UPDATE
   static async updateById(id, query) {
-    const item = await ItemModel.findOneAndUpdate({ id }, query).populate(
-      "category"
-    );
+    const item = await ItemModel.findOneAndUpdate({ id }, query).populate("category");
     return item;
   }
 
