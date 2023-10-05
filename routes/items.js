@@ -7,14 +7,15 @@ const itemRouter = Router();
 itemRouter.get(
   "/",
   asyncHandler(async (req, res) => {
+    console.log("item router in");
     const page = req.query.page || 1;
     const perPage = req.query.perPage || 10;
-    const sort = req.query.sort;
+    let sort = req.query.sort;
     const category = req.category;
 
     // sort query 설정
     if (!sort || sort === "최신순") {
-      sort = { created_at: -1 };
+      sort = { createdAt: -1 };
     } else if (sort === "인기순") {
       sort = { sales: -1 };
     } else {
@@ -22,25 +23,25 @@ itemRouter.get(
     }
 
     // 전체 상품 조회
-    if (!category && !sort) {
-      const items = await itemService.getItems(page, perPage, sort);
+    if (!category) {
+      const { items, totalPage, errorMessage } = await itemService.getItems(page, perPage, sort);
 
-      if (items.errorMessage) {
-        throw { status: 404, message: items.errorMessage };
+      if (errorMessage) {
+        throw { status: 404, message: errorMessage };
       }
 
-      res.status(200).json({ message: "success", items });
+      res.status(200).json({ message: "success", items, totalPage });
     }
 
     // 카테고리별 상품 조회
-    if (category && !sort) {
-      const items = await itemService.getItemsByCategory({ category }, page, perPage, sort);
+    if (category) {
+      const { items, totalPage, errorMessage } = await itemService.getItemsByCategory({ category }, page, perPage, sort);
 
-      if (items.errorMessage) {
-        throw { status: 404, message: items.errorMessage };
+      if (errorMessage) {
+        throw { status: 404, message: errorMessage };
       }
 
-      res.status(200).json({ message: "success", items });
+      res.status(200).json({ message: "success", items, totalPage });
     }
   })
 );
@@ -48,9 +49,15 @@ itemRouter.get(
 itemRouter.get(
   "/:item_id",
   asyncHandler(async (req, res) => {
-    const { item_id } = req.params;
+    const id = req.params.item_id;
+    const category = req.category;
 
-    const item = await itemService.getItem({ item_id });
+    let query = { id };
+    if (category) {
+      query.category = category;
+    }
+
+    const item = await itemService.getItem(query);
 
     if (item.errorMessage) {
       throw { status: 404, message: item.errorMessage };

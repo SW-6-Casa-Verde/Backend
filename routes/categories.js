@@ -22,7 +22,8 @@ categoryRouter.post(
   "/",
   asyncHandler(async (req, res) => {
     // 관리자 인증 미들웨어 추가
-    const { id, name } = req.body;
+    const { name } = req.body;
+    const id = Number(req.body.id);
 
     if (!id || !name) {
       throw {
@@ -37,14 +38,14 @@ categoryRouter.post(
       throw { status: 409, message: category.errorMessage };
     }
 
-    res.status(201).json({ message: "success" });
+    res.status(201).json({ message: "success", category });
   })
 );
 
 categoryRouter.put(
   "/:category_id",
   asyncHandler(async (req, res) => {
-    const { category_id } = req.params;
+    const category_id = Number(req.params.category_id);
     const { id, name } = req.body;
 
     if (!id || !name) {
@@ -54,46 +55,46 @@ categoryRouter.put(
       };
     }
 
-    const category = await CategoryService.setCategory({ category_id }, { id, name });
+    const category = await CategoryService.setCategory({ id: category_id }, { id, name });
 
     if (category.errorMessage) {
       throw { status: 409, message: category.errorMessage };
     }
 
-    res.status(200).json({ message: "success" });
+    res.status(200).json({ message: "success", category });
   })
 );
 
 categoryRouter.delete(
   "/:category_id",
   asyncHandler(async (req, res) => {
-    const { category_id } = req.params;
+    const category_id = Number(req.params.category_id);
 
-    const category = await CategoryService.removeCategory({ category_id });
+    const category = await CategoryService.deleteCategory({ id: category_id });
 
     if (category.errorMessage) {
       throw { status: 409, message: category.errorMessage };
     }
 
-    res.status(200).json({ message: "success " });
+    res.status(200).json({ message: "success", category });
   })
 );
 
 // 상품 라우터 연결
-categoryRouter.get(
+categoryRouter.use(
   "/:category_id/items",
-  asyncHandler(async (req, res, next) => {
+  async (req, res, next) => {
     const { category_id } = req.params;
 
-    const category = await CategoryService.getCategory({ category_id });
+    const category = await CategoryService.getCategory({ id: category_id });
 
-    if (!category) {
-      throw { status: 404, message: "해당 카테고리가 존재하지 않습니다." };
+    if (category.errorMessage) {
+      next({ status: 404, message: category.errorMessage });
     }
 
     req.category = category;
     next();
-  }),
+  },
   itemRouter
 );
 

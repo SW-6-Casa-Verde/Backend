@@ -6,45 +6,45 @@ const CategoryModel = model("Category", CategorySchema);
 class Category {
   // Create
   static async create({ newCategory }) {
-    const category = CategoryModel.insertOne({ newCategory });
+    const category = await CategoryModel.create(newCategory);
     return category;
   }
 
   // Read
   static async findAll() {
-    const categories = CategoryModel.find({});
+    const categories = await CategoryModel.find({});
     return categories;
   }
 
-  static async findById(id) {
-    const category = CategoryModel.findOne({ id });
+  static async findById({ id }) {
+    const category = await CategoryModel.findOne({ id });
     return category;
   }
 
-  static async findByName(name) {
-    const category = CategoryModel.findOne({ name });
+  static async findByName({ name }) {
+    const category = await CategoryModel.findOne({ name });
     return category;
   }
 
   // Update
-  static async updateById({ id }, { query }) {
-    const category = CategoryModel.findOneAndUpdate({ id }, { query });
+  static async updateById({ id }, query) {
+    const category = await CategoryModel.findOneAndUpdate({ id }, query, { new: true });
     return category;
   }
 
-  static async updateByName({ name }, { query }) {
-    const category = CategoryModel.findOneAndUpdate({ name }, { query });
+  static async updateByName({ name }, query) {
+    const category = await CategoryModel.findOneAndUpdate({ name }, query, { new: true });
     return category;
   }
 
   // Delete
-  static async deleteById({ id }, { query }) {
-    const category = CategoryModel.findOneAndDelete({ id }, { query });
+  static async deleteById({ id }, query) {
+    const category = await CategoryModel.findOneAndDelete({ id }, query, { new: true });
     return category;
   }
 
-  static async deleteByIdByName({ name }, { query }) {
-    const category = CategoryModel.findOneAndDelete({ name }, { query });
+  static async deleteByIdByName({ name }, query) {
+    const category = await CategoryModel.findOneAndDelete({ name }, query, { new: true });
     return category;
   }
 }

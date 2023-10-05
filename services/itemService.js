@@ -16,8 +16,8 @@ class itemService {
 
   // Read
   // 상품 한 개
-  static async getItem({ item_id }) {
-    const item = await Item.findById({ item_id });
+  static async getItem(query) {
+    const item = await Item.findByQuery(query);
 
     if (!item) {
       const errorMessage = "해당 상품이 존재하지 않습니다.";
@@ -31,24 +31,34 @@ class itemService {
   static async getItems(page, perPage, sortQuery) {
     const [items, totalPage] = await Item.findByCategory({}, page, perPage, sortQuery);
 
+    if (totalPage < page) {
+      const errorMessage = "페이지가 존재하지 않습니다.";
+      return { errorMessage };
+    }
+
     if (!items) {
       const errorMessage = "상품이 존재하지 않습니다.";
       return { errorMessage };
     }
 
-    return [items, totalPage];
+    return { items, totalPage };
   }
 
   // 카테고리별 상품 & sort
   static async getItemsByCategory({ category }, page, perPage, sortQuery) {
     const [items, totalPage] = await Item.findByCategory({ category }, page, perPage, sortQuery);
 
+    if (totalPage < page) {
+      const errorMessage = "페이지가 존재하지 않습니다.";
+      return { errorMessage };
+    }
+
     if (!items) {
       const errorMessage = "상품이 존재하지 않습니다.";
       return { errorMessage };
     }
 
-    return [items, totalPage];
+    return { items, totalPage };
   }
 
   // Update
