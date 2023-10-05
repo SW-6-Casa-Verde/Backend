@@ -57,7 +57,7 @@ class CategoryService {
   }
 
   // Delete
-  static async removeCategory({ id }) {
+  static async deleteCategory({ id }) {
     const category = Category.findById({ id }); // 존재하는지 먼저 찾는 작업
 
     if (!category) {
