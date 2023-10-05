@@ -5,31 +5,24 @@ const UserModel = model("User", UserSchema);
 
 class User {
   static async findByEmail(email) {
-    const findEmail = await UserModel.findOne({ email });
-    return findEmail;
+    return await UserModel.findOne({ email });
   }
 
   static async create(user) {
-    const newUser = await UserModel.create(user);
-    return newUser;
+    return await UserModel.create(user);
   }
 
-  static async findByUserId(id) {
-    const findUser = await UserModel.findOne({ id });
-    return findUser;
+  static async findByUserId(uuid) {
+    return await UserModel.findOne({ uuid });
   }
 
-  static async updateByUserId({ email, updateData }) {
-    // 토큰 구현 이후 email -> id
+  static async updateByUserId({ uuid, updateData }) {
     const update = { $set: updateData };
-    const updateUser = await UserModel.findOneAndUpdate({ email }, update);
-    return updateUser;
+    return await UserModel.findOneAndUpdate({ uuid }, update);
   }
 
-  static async deleteByUserId(userId) {
-    // 토큰 구현 이후 email -> id
-    const deleteUser = await UserModel.findOneAndRemove({ email: userId });
-    return deleteUser;
+  static async deleteByUserId(uuid) {
+    return await UserModel.findOneAndRemove({ uuid });
   }
 }
 

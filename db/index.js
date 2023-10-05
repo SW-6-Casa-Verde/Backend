@@ -27,7 +27,7 @@ async function boot() {
   // 관리자 데이터가 없으면 넣음.
   if (!adminCheck) {
     await User.create({
-      id: "admin_id",
+      uuid: "admin_id",
       email: "admin@admin.com",
       password: "adminadmin@",
       address: "서울특별시 구구 동동",
