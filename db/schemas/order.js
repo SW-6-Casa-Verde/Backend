@@ -35,7 +35,7 @@ const OrderSchema = new Schema(
       type: String,
       enum: payMethod,
       default: "CARD",
-      require: true,
+      required: true,
     },
     order_status: {
       type: String,
@@ -54,4 +54,4 @@ const OrderSchema = new Schema(
   }
 );
 
-module.exports = OrderSchema;
+export default OrderSchema;
