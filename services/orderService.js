@@ -1,36 +1,45 @@
-import { Order } from "../db/models/order";
+import { Order, OrderModel } from "../db/models/order";
 
 class OrderService {
   // 사용자
   static async newOrder(data) {
     const order = await Order.create(data);
+    if (!order) {
+      const errorMessage = "주문 정상적으로 접수되지않았습니다.";
+      return errorMessage;
+    }
     return order;
   }
 
-  static async getOrder(data) {
-    const { id, role } = data;
+  static async getOrder(data, page) {
+    //data : user or admin
+    const order = await Order.findAll();
+    const perPage = 10;
+    if (!order) {
+      const errorMessage = "주문 내역이 없습니다.";
+      return errorMessage;
+    }
 
-    if (role === "USER") {
-      const order = await Order.findById(id);
-      if (!order) {
-        const errorMessage = "주문 내역이 없습니다.";
-        return errorMessage;
-      }
-      return order;
-    } else if (role === "ADMIN") {
-      const order = await Order.findAll();
-      //페이지네이션이나 사용자별 구매목록은 router에서
-      if (!order) {
-        const errorMessage = "주문 내역이 없습니다.";
-        return errorMessage;
-      }
-      return order;
+    if (data === "admin") {
+      const total = await OrderModel.countDocuments({});
+      order
+        .sort({ createdAt: -1 })
+        .skip(perPage * (page - 1))
+        .limit(perPage);
+
+      const totalPage = Math.ceil(total / perPage);
+      //사용자별 구매목록은 router에서
+
+      return { totalPage, order };
+    } else {
+      const orders = await Order.findByUserId(data);
+      return orders;
     }
   }
 
   static async updateOrder(data) {
     const { order_id, updateData, role } = data;
-    const order = await Order.findById(order_id);
+    const order = await Order.findByOrderId(order_id);
 
     if (!order) {
       const errorMessage = "주문 내역이 없습니다.";
@@ -63,7 +72,7 @@ class OrderService {
     const { order_id, role } = data;
 
     if (role === "USER" || role == "ADMIN") {
-      const order = await Order.findById(order_id);
+      const order = await Order.findByOrderId(order_id);
 
       if (!order) {
         const errorMessage = "주문 내역이 없습니다.";
