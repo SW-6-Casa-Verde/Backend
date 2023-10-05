@@ -5,11 +5,6 @@ import validateUser from "../validators/userValidator";
 import validateUserUpdate from "../validators/userUpdateValidator";
 const router = Router();
 
-// 회원 가입 페이지 이동 ? (이거는 안쓸거같은데)
-router.get("/sign-up", (req, res, next) => {
-  // ...
-});
-
 // 이메일 중복 검사
 router.post(
   "/check-email-duplicate",
