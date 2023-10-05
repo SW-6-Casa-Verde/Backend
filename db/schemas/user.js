@@ -1,5 +1,4 @@
 import { Schema } from "mongoose";
-import randStr from "../../utils/randomString";
 import { userRole } from "../../constants";
 
 const UserSchema = new Schema({
@@ -27,7 +26,7 @@ const UserSchema = new Schema({
   },
   name: {
     type: String,
-    default: () => `${randStr(7)}-user`,
+    default: () => `unknown-user`,
   },
   role: {
     type: String,
