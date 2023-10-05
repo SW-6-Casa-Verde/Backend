@@ -1,4 +1,4 @@
-import User from "../db/models/User";
+import User from "../db/models/user";
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
 import { userRole } from "../constants";
@@ -30,12 +30,12 @@ class UserService {
 
     // 비밀번호 해쉬
     const hashedPassword = await bcrypt.hash(password, 10);
-    const id = uuid();
+    const uuid = uuid();
     let { address, phone, name } = newUser;
     name = !name ? undefined : name;
 
     const validatedUser = {
-      id,
+      uuid,
       email,
       password: hashedPassword,
       address,
@@ -53,18 +53,17 @@ class UserService {
     return createNewUser;
   }
 
-  static async getUserInfo(userId) {
-    const getUser = await User.findByUserId(userId);
+  static async getUserInfo(userUuid) {
+    const getUser = await User.findByUserId(userUuid);
     if (!getUser) {
       const errorMessage = "사용자 조회에 실패하였습니다.";
       return { status: 400, errorMessage };
     }
-    const { email, address, phone, name } = getUser;
-    const resData = { email, address, phone, name };
-    return resData;
+    const { uuid, email, address, phone, name } = getUser;
+    return { uuid, email, address, phone, name };
   }
 
-  // 토큰 구현 이후 email -> id
+  // 토큰 구현 이후 email -> uuid
   static async setUserInfo({ email, value }) {
     if ("role" in value && value.role !== "USER") {
       delete value.role;
@@ -86,8 +85,8 @@ class UserService {
     return updatedUserInfo;
   }
 
-  static async deleteUser(userId) {
-    const delUser = await User.deleteByUserId(userId);
+  static async deleteUser(uuid) {
+    const delUser = await User.deleteByUserId(uuid);
     if (!delUser) {
       const errorMessage = "사용자 삭제에 실패하였습니다.";
       return { status: 400, errorMessage };
