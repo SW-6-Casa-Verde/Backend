@@ -48,13 +48,6 @@ const OrderSchema = new Schema(
       ref: "User",
       required: true,
     },
-    orderItems: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "OrderItem",
-        required: true,
-      },
-    ],
   },
   {
     timestamps: true, // createdAt 및 updatedAt 필드 추가
