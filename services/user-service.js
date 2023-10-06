@@ -1,7 +1,6 @@
-import User from "../db/models/User";
+import User from "../db/models/user";
 import bcrypt from "bcrypt";
-import { v4 as uuid } from "uuid";
-import { userRole } from "../constants";
+import { v4 as uuidv4 } from "uuid";
 
 class UserService {
   static async checkEmailDuplicate(email) {
@@ -13,10 +12,9 @@ class UserService {
     return isEmailUnique;
   }
 
-  // 이메일 중복 검증을 이미 했는지 확인하는 방법?
   static async addUser(newUser) {
     const { email, password } = newUser;
-    // 이메일 중복 검증
+    // 이메일 중복 검증 (더블 체크)
     const isEmailUnique = await this.checkEmailDuplicate(email);
     if (isEmailUnique) {
       const errorMessage = isEmailUnique.errorMessage;
@@ -31,12 +29,11 @@ class UserService {
 
     // 비밀번호 해쉬
     const hashedPassword = await bcrypt.hash(password, 10);
-    const id = uuid();
     let { address, phone, name } = newUser;
     name = !name ? undefined : name;
 
     const validatedUser = {
-      id,
+      uuid: uuidv4(),
       email,
       password: hashedPassword,
       address,
@@ -52,6 +49,46 @@ class UserService {
     }
     // success
     return createNewUser;
+  }
+
+  static async getUserInfo(userUuid) {
+    const getUser = await User.findByUserId(userUuid);
+    if (!getUser) {
+      const errorMessage = "사용자 조회에 실패하였습니다.";
+      return { status: 400, errorMessage };
+    }
+    const { uuid, email, address, phone, name } = getUser;
+    return { uuid, email, address, phone, name };
+  }
+
+  static async setUserInfo({ uuid, value }) {
+    if ("role" in value && value.role !== "USER") {
+      delete value.role;
+    }
+
+    if ("password" in value) {
+      const isPassword = await bcrypt.hash(value.password, 10);
+      value.password = isPassword;
+    }
+
+    const updatedUserInfo = await User.updateByUserId({
+      uuid,
+      updateData: value,
+    });
+    if (!updatedUserInfo) {
+      const errorMessage = "사용자 정보 수정에 실패하였습니다.";
+      return { status: 400, errorMessage };
+    }
+    return updatedUserInfo;
+  }
+
+  static async deleteUser(uuid) {
+    const delUser = await User.deleteByUserId(uuid);
+    if (!delUser) {
+      const errorMessage = "사용자 삭제에 실패하였습니다.";
+      return { status: 400, errorMessage };
+    }
+    return delUser;
   }
 }
 
