@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
 import dbBoot from "./db";
+import jwtBlacklist from "./middlewares/jwt-blacklist";
 
 import indexRouter from "./routes";
 import usersRouter from "./routes/users";
@@ -24,12 +25,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
+const { blacklist, setBlacklist } = jwtBlacklist();
+app.locals.blacklist = blacklist;
+
 // 라우터 등록
 app.get("/", (req, res) => {
   res.render("img-upload-test", { title: "test" });
 });
 app.use("/", indexRouter);
-app.use("/users", usersRouter);
+app.use("/users", setBlacklist, usersRouter);
 app.use("/order", orderRouter);
 app.use("/categories", categoryRouter);
 

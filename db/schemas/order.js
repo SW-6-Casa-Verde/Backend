@@ -31,7 +31,7 @@ const OrderSchema = new Schema(
     request: {
       type: String,
     },
-    pay_Method: {
+    pay_method: {
       type: String,
       enum: payMethod,
       default: "CARD",
