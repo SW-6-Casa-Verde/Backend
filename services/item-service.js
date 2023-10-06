@@ -1,17 +1,9 @@
 import { Item } from "../db/models/Item"; // db/index.js 완성되면 바꾸기 -> ../db
-import { Category } from "../db/models/category"; // db/index.js 완성되면 바꾸기 -> ../db
 
-class itemService {
+class ItemService {
   // Create
   static async addItem({ name, price, description, main_image, images, category }) {
-    let newItem = { name, price, description, main_image, category };
-    if (images) {
-      newItem.images = images;
-    }
-
-    const createdNewItem = await Item.create({ newItem });
-
-    return createdNewItem;
+    return await Item.create({ name, price, description, main_image, images, category });
   }
 
   // Read
@@ -28,64 +20,38 @@ class itemService {
   }
 
   // 상품 전체 & sort
-  static async getItems(page, perPage, sortQuery) {
-    const [items, totalPage] = await Item.findByCategory({}, page, perPage, sortQuery);
-
-    if (totalPage < page) {
-      const errorMessage = "페이지가 존재하지 않습니다.";
-      return { errorMessage };
-    }
-
-    if (!items) {
-      const errorMessage = "상품이 존재하지 않습니다.";
-      return { errorMessage };
-    }
-
-    return { items, totalPage };
+  static async getItems({ page, perPage, sortQuery }) {
+    return await Item.findByCategory({ page, perPage, sortQuery });
   }
 
   // 카테고리별 상품 & sort
-  static async getItemsByCategory({ category }, page, perPage, sortQuery) {
-    const [items, totalPage] = await Item.findByCategory({ category }, page, perPage, sortQuery);
-
-    if (totalPage < page) {
-      const errorMessage = "페이지가 존재하지 않습니다.";
-      return { errorMessage };
-    }
-
-    if (!items) {
-      const errorMessage = "상품이 존재하지 않습니다.";
-      return { errorMessage };
-    }
-
-    return { items, totalPage };
+  static async getItemsByCategory({ category, page, perPage, sortQuery }) {
+    return await Item.findByCategory({ category, page, perPage, sortQuery });
   }
 
   // Update
-  static async setItem({ item_id }, query) {
-    const item = await Item.findById({ item_id });
+  static async setItem({ id }, query) {
+    const item = await Item.findByQuery({ id });
 
     if (!item) {
       const errorMessage = "해당 상품이 존재하지 않습니다.";
       return { errorMessage };
     }
 
-    const updatedItem = await Item.updateById({ item_id }, query);
-    return updatedItem;
+    return await Item.updateByQuery({ id }, query);
   }
 
   // Delete
-  static async deleteItem({ item_id }) {
-    const item = await Item.findById({ item_id });
+  static async deleteItem({ id, category }) {
+    const item = await Item.findByQuery({ id, category });
 
     if (!item) {
       const errorMessage = "해당 상품이 존재하지 않습니다.";
       return { errorMessage };
     }
 
-    const deletedItem = await Item.deleteById({ item_id });
-    return deletedItem;
+    return await Item.deleteByQuery({ id, category });
   }
 }
 
-export { itemService };
+export { ItemService };

@@ -1,4 +1,3 @@
-import { model } from "mongoose";
 import { Category } from "../db/models/category";
 
 class CategoryService {
@@ -11,23 +10,13 @@ class CategoryService {
       return { errorMessage };
     }
 
-    const newCategory = { id, name };
-    const createdNewCategory = await Category.create({ newCategory });
-
-    return createdNewCategory;
+    return await Category.create({ id, name });
   }
 
   // Read
   // 전체 카테고리
   static async getCategories() {
-    const categories = await Category.findAll();
-
-    if (!categories) {
-      const errorMessage = "카테고리가 없습니다. 카테고리를 생성해 주세요.";
-      return { errorMessage };
-    }
-
-    return categories;
+    return await Category.findAll();
   }
 
   // 카테고리 한 개
@@ -58,9 +47,7 @@ class CategoryService {
       return { errorMessage };
     }
 
-    const updatedCategory = await Category.updateById({ id }, query);
-
-    return updatedCategory;
+    return await Category.updateById({ id }, query);
   }
 
   // Delete
@@ -72,9 +59,7 @@ class CategoryService {
       return { errorMessage };
     }
 
-    const removedCategory = await Category.deleteById({ id });
-
-    return removedCategory;
+    return await Category.deleteById({ id });
   }
 }
 

@@ -43,19 +43,18 @@ categoryRouter.post(
 );
 
 categoryRouter.put(
-  "/:category_id",
+  "/:id",
   asyncHandler(async (req, res) => {
-    const category_id = Number(req.params.category_id);
-    const { id, name } = req.body;
+    const id = Number(req.params.id);
 
-    if (!id || !name) {
+    if (!req.body.id || !req.body.name) {
       throw {
         status: 400,
         message: "잘못된 요청입니다. 요청한 값을 다시 확인해 주세요",
       };
     }
 
-    const category = await CategoryService.setCategory({ id: category_id }, { id, name });
+    const category = await CategoryService.setCategory({ id }, req.body);
 
     if (category.errorMessage) {
       throw { status: 409, message: category.errorMessage };
@@ -66,11 +65,11 @@ categoryRouter.put(
 );
 
 categoryRouter.delete(
-  "/:category_id",
+  "/:id",
   asyncHandler(async (req, res) => {
-    const category_id = Number(req.params.category_id);
+    const id = Number(req.params.id);
 
-    const category = await CategoryService.deleteCategory({ id: category_id });
+    const category = await CategoryService.deleteCategory({ id });
 
     if (category.errorMessage) {
       throw { status: 409, message: category.errorMessage };
@@ -82,11 +81,11 @@ categoryRouter.delete(
 
 // 상품 라우터 연결
 categoryRouter.use(
-  "/:category_id/items",
+  "/:id/items",
   async (req, res, next) => {
-    const { category_id } = req.params;
+    const { id } = req.params;
 
-    const category = await CategoryService.getCategory({ id: category_id });
+    const category = await CategoryService.getCategory({ id });
 
     if (category.errorMessage) {
       next({ status: 404, message: category.errorMessage });

@@ -6,46 +6,38 @@ const CategoryModel = model("Category", CategorySchema);
 class Category {
   // Create
   static async create({ newCategory }) {
-    const category = await CategoryModel.create(newCategory);
-    return category;
+    return await CategoryModel.create(newCategory);
   }
 
   // Read
   static async findAll() {
-    const categories = await CategoryModel.find({});
-    return categories;
+    return await CategoryModel.find({});
   }
 
   static async findById({ id }) {
-    const category = await CategoryModel.findOne({ id });
-    return category;
+    return await CategoryModel.findOne({ id });
   }
 
   static async findByName({ name }) {
-    const category = await CategoryModel.findOne({ name });
-    return category;
+    return await CategoryModel.findOne({ name });
   }
 
   // Update
   static async updateById({ id }, query) {
-    const category = await CategoryModel.findOneAndUpdate({ id }, query, { new: true });
-    return category;
+    return await CategoryModel.findOneAndUpdate({ id }, query, { new: true });
   }
 
   static async updateByName({ name }, query) {
-    const category = await CategoryModel.findOneAndUpdate({ name }, query, { new: true });
-    return category;
+    return await CategoryModel.findOneAndUpdate({ name }, query, { new: true });
   }
 
   // Delete
   static async deleteById({ id }, query) {
-    const category = await CategoryModel.findOneAndDelete({ id }, query, { new: true });
-    return category;
+    return await CategoryModel.findOneAndDelete({ id }, query, { new: true });
   }
 
   static async deleteByIdByName({ name }, query) {
-    const category = await CategoryModel.findOneAndDelete({ name }, query, { new: true });
-    return category;
+    await CategoryModel.findOneAndDelete({ name }, query, { new: true });
   }
 }
 
