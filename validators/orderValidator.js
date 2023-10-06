@@ -22,6 +22,16 @@ const orderJoiSchema = Joi.object({
     .valid(...orderStatus)
     .required(),
   user_id: Joi.string().hex().length(24).required(),
+  orderItems: Joi.array()
+    .required()
+    .items(
+      Joi.object({
+        id: Joi.number().required(),
+        quantity: Joi.number().min(1).required(),
+        unit_price: Joi.number().required(),
+        item_id: Joi.string().hex().length(24).required(),
+      })
+    ),
 });
 // hex문자열에 16진수 문자만 포함되어 있는지 확인하고 정확히 length24자로 구성된 문자열인지 확인
 

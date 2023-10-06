@@ -1,4 +1,5 @@
 import { Order } from "../db/models/order";
+import { OrderItem } from "../db/models/orderItem";
 import { User } from "../db/models/User";
 
 class OrderService {
@@ -12,6 +13,14 @@ class OrderService {
         message: "주문을 생성하는 동안 오류가 발생했습니다.",
       };
     }
+
+    await Promise.all(
+      data.orderItems.map(async (orderItemData) => {
+        const orderItem = await orderItem.create(orderItemData);
+        order.orderItems.push(orderItem._id);
+      })
+    );
+    await order.save();
 
     return order;
   }
