@@ -84,6 +84,7 @@ categoryRouter.use(
   "/:id/items",
   async (req, res, next) => {
     const { id } = req.params;
+    console.log("category router in ", req.body.name);
 
     const category = await CategoryService.getCategory({ id });
 

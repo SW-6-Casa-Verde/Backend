@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 const itemImg = multer({ storage });
 
 const testMiddle = (req, res, next) => {
-  console.log("test middle in", req.body);
+  console.log("test middle in", req.params);
   next();
 };
 

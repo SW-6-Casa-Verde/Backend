@@ -11,13 +11,14 @@ import indexRouter from "./routes";
 import usersRouter from "./routes/users";
 import orderRouter from "./routes/order";
 import { categoryRouter } from "./routes/categories";
+import { viewsRouter } from "./routes/views";
 
 const app = express();
 app.use(cors());
 
 // view engine setup
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs");
+// app.set("views", path.join(__dirname, "views"));
+// app.set("view engine", "ejs");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -36,6 +37,7 @@ app.use("/", indexRouter);
 app.use("/users", setBlacklist, usersRouter);
 app.use("/order", orderRouter);
 app.use("/categories", categoryRouter);
+app.use("/views", viewsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -25,12 +25,26 @@
       imgFormData.append("img", img);
 
       console.log("요청을 보냅니다.", imgFormData);
-      const res = await fetch("categories/1/items", {
-        method: "post",
+      const res = await fetch("http://localhost:3000/categories/1/items", {
+        method: "POST",
+        headers: {
+          contentType: "application/json",
+        },
         body: JSON.stringify({
           name,
-          test: "test data",
-          imgFormData,
+          price: 2000,
+          description: "test data",
+          main_image: [
+            {
+              data: "Buffer",
+              contentType: "String",
+            },
+            {
+              data: "Buffer",
+              contentType: "String",
+            },
+          ],
+          category_id: 1,
         }),
       });
       const data = await res.json();
