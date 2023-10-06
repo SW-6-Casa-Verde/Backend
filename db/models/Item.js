@@ -1,35 +1,18 @@
 import { model } from "mongoose";
 import { ItemSchema } from "../schemas/item";
-import { CategorySchema } from "../schemas/category";
 
 const ItemModel = model("Item", ItemSchema);
 
 class Item {
   // CREATE
-  static async create({ newItem }) {
-    const createdNewItem = await ItemModel.insertOne({ newItem });
-    return createdNewItem;
+  static async create({ name, price, description, main_image, images, category }) {
+    return await ItemModel.create({ name, price, description, main_image, images, category });
   }
 
   // READ
   // 카테고리별 상품
-  static async findByCategory(query, page, perPage, sortQuery) {
-    // 정렬 X
-    if (!sortQuery) {
-      const [total, items] = await Promise.all([
-        ItemModel.find(query).countDocuments({}),
-        ItemModel.find(query)
-          .skip(perPage * (page - 1))
-          .limit(perPage)
-          .populate("category"),
-      ]);
-
-      const totalPage = Math.ceil(total / perPage);
-
-      return [items, totalPage];
-    }
-
-    // 정렬 O
+  static async findByCategory({ category, page, perPage, sortQuery }) {
+    const query = category ? { category } : {};
     const [total, items] = await Promise.all([
       ItemModel.find(query).countDocuments({}),
       ItemModel.find(query)
@@ -41,25 +24,22 @@ class Item {
 
     const totalPage = Math.ceil(total / perPage);
 
-    return [items, totalPage];
+    return { items, totalPage };
   }
 
   // 상품 한 개
   static async findByQuery(query) {
-    const item = await ItemModel.findOne(query).populate("category");
-    return item;
+    return await ItemModel.findOne(query).populate("category");
   }
 
   // UPDATE
   static async updateByQuery(findQuery, updateQuery) {
-    const item = await ItemModel.findOneAndUpdate(findQuery, updateQuery).populate("category");
-    return item;
+    return await ItemModel.findOneAndUpdate(findQuery, updateQuery, { new: true }).populate("category");
   }
 
   // DELETE
-  static async deleteById({ id }) {
-    const item = await ItemModel.delete({ id }).populate("category");
-    return item;
+  static async deleteByQuery(query) {
+    return await ItemModel.findOneAndDelete(query, { new: true }).populate("category");
   }
 }
 
