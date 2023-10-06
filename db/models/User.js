@@ -5,18 +5,24 @@ const UserModel = model("User", UserSchema);
 
 class User {
   static async findByEmail(email) {
-    const findEmail = await UserModel.findOne({ email });
-    return findEmail;
+    return await UserModel.findOne({ email });
   }
 
   static async create(user) {
-    const newUser = await UserModel.create(user);
-    return newUser;
+    return await UserModel.create(user);
   }
 
-  //order에서 사용자 받아오기
   static async findByUserId(uuid) {
     return await UserModel.findOne({ uuid });
+  }
+
+  static async updateByUserId({ uuid, updateData }) {
+    const update = { $set: updateData };
+    return await UserModel.findOneAndUpdate({ uuid }, update);
+  }
+
+  static async deleteByUserId(uuid) {
+    return await UserModel.findOneAndRemove({ uuid });
   }
 }
 
