@@ -6,7 +6,7 @@ export default function jwtBlacklist() {
     const token = req.cookies.token;
     const localBlackList = req.app.locals.blacklist;
     if (!token || localBlackList.includes(token)) {
-      throw { status: 401, message: "Unauthorized" };
+      return res.status(401).redirect("/");
     }
 
     req.token = token;
