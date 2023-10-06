@@ -1,5 +1,5 @@
 import { Order } from "../db/models/order";
-import { User } from "../db/models/User";
+import { User } from "../db/models/user";
 
 class OrderService {
   // 사용자
@@ -21,11 +21,7 @@ class OrderService {
     const perPage = 10;
 
     if (data === "admin") {
-      const [orders, totalPage] = await Order.getPaginatedOrders(
-        {},
-        page,
-        perPage
-      );
+      const [orders, totalPage] = await Order.getPaginatedOrders({}, page, perPage);
 
       //사용자별 구매목록은 router에서
       if (!orders.length) {
@@ -43,11 +39,7 @@ class OrderService {
         };
       }
 
-      const [orders, totalPage] = await Order.getPaginatedOrders(
-        { user_id: user },
-        page,
-        perPage
-      );
+      const [orders, totalPage] = await Order.getPaginatedOrders({ user_id: user }, page, perPage);
       //console.log("에러나니", orders, totalPage);
       if (!orders.length) {
         throw new Error("사용자의 주문 내역이 없습니다.");
@@ -64,15 +56,9 @@ class OrderService {
     console.log(order.order_status);
 
     if (role === "user") {
-      if (
-        order.order_status === "SHIPPED" ||
-        order.order_status === "DELIVERED"
-      ) {
+      if (order.order_status === "SHIPPED" || order.order_status === "DELIVERED") {
         return { errorMessage: "배송이 시작되어 수정이 불가능합니다." };
-      } else if (
-        order.order_status === "ORDER_CONFIRMED" ||
-        order.order_status === "PREPARING_FOR_SHIPMENT"
-      ) {
+      } else if (order.order_status === "ORDER_CONFIRMED" || order.order_status === "PREPARING_FOR_SHIPMENT") {
         return await Order.update(order_id, updateData);
       }
     } else if (role === "admin") {
@@ -92,15 +78,9 @@ class OrderService {
     }
 
     if (role === "user") {
-      if (
-        order.order_status === "SHIPPED" ||
-        order.order_status === "DELIVERED"
-      ) {
+      if (order.order_status === "SHIPPED" || order.order_status === "DELIVERED") {
         return { errorMessage: "배송이 시작되어 취소가 불가능합니다." };
-      } else if (
-        order.order_status === "ORDER_CONFIRMED" ||
-        order.order_status === "PREPARING_FOR_SHIPMENT"
-      ) {
+      } else if (order.order_status === "ORDER_CONFIRMED" || order.order_status === "PREPARING_FOR_SHIPMENT") {
         await Order.delete(orderId);
 
         return { cancelMessage: "주문이 취소되었습니다." };
