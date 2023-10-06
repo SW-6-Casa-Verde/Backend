@@ -2,6 +2,7 @@ import multer from "multer";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    console.log("multer in");
     cb(null, "uploads/images"); // 이미지 저장 경로
   },
   filename: (req, file, cb) => {

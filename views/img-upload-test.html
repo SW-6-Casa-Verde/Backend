@@ -8,7 +8,7 @@
   <body>
     <form id="formBox" enctype="multipart/form-data">
       <input id="name" name="name" />
-      <input type="file" id="img" accept="image/*" name="main_image" multiple />
+      <input type="file" id="img" accept="image/*" name="main_images" multiple />
       <input type="file" id="img" accept="image/*" name="images" multiple />
       <input type="submit" id="button" value="추가하기" />
     </form>
@@ -29,11 +29,18 @@
       formData.append("category_id", 1);
 
       console.log("요청을 보냅니다.");
-      const res = await fetch("http://localhost:3000/categories/1/items", {
-        method: "POST",
+      /*const res = await fetch("http://localhost:3000/categories/1/items", {
+        method: "post",
+        body: formData,
+      });
+      const data = await res.json();*/
+      //image update
+      const res = await fetch("http://localhost:3000/categories/1/items/8vUtDJuBS9bvNU6NqVKgW/images", {
+        method: "put",
         body: formData,
       });
       const data = await res.json();
+
       console.log("응답 데이터 : ", data);
     });
   </script>
