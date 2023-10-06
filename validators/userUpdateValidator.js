@@ -8,7 +8,12 @@ const namePattern = /^[a-zA-Z0-9]{2,12}$/;
 
 // Joi 스키마 정의
 const userUpdateJoiSchema = Joi.object({
-  password: Joi.string().regex(passwordPattern),
+  password: Joi.string()
+    .min(8)
+    .max(30)
+    .regex(passwordPattern)
+    .required()
+    .trim(),
   address: Joi.string(),
   phone: Joi.string().regex(phoneNumberPattern),
   name: Joi.string().regex(namePattern),

@@ -1,22 +1,27 @@
 import { Router } from "express";
 import UserService from "../services/user-service";
 import asyncHandler from "../utils/asyncHandler";
+import { verifyJWT } from "../utils/jwt";
 import validateUserUpdate from "../validators/userUpdateValidator";
 const router = Router();
+
+// const { setBlacklist } = jwtBlacklist();
 
 // 사용자 정보 조회 (jwt 정보 활용 예정)
 // :uuid로 받고 role에 따라 분기 처리
 router.get(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
-    // 헤더 토큰 값 검사
-    // const token = req.headers.authorization;
-    // token 사용한 인증 및 처리...
-    // const jwtCookie = req.cookies.jwt; 쿠키에 저장했다면 이런 방식으로
+    // 사용자 일치 여부 확인
+    const decode = await verifyJWT(req.token);
     const uuid = req.params.uuid;
 
+    if (decode.uuid !== uuid) {
+      throw { status: 401, message: "Unauthorized" };
+    }
+
     // 유저 아이디 고정 (토큰 구현 전)
-    const userInfo = await UserService.getUserInfo(uuid);
+    const userInfo = await UserService.getUserInfo(decode.uuid);
     if (userInfo.errorMessage) {
       const { status, errorMessage } = userInfo;
       throw { status, message: errorMessage };
@@ -31,10 +36,14 @@ router.get(
 router.patch(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
-    // 헤더 토큰 값 검사
-
-    // 토큰 구현 이후 header에 토큰 정보를 담아서., role
+    // 사용자 일치 여부 확인
+    const decode = await verifyJWT(req.token);
     const uuid = req.params.uuid;
+
+    if (decode.uuid !== uuid) {
+      throw { status: 401, message: "Unauthorized" };
+    }
+
     const { data } = req.body;
 
     // 데이터 유효성 검사
@@ -42,7 +51,10 @@ router.patch(
     if (error) throw { status: 400, message: "요청한 값을 다시 확인해주세요." };
 
     // id, update data
-    const updateUser = await UserService.setUserInfo({ uuid, value });
+    const updateUser = await UserService.setUserInfo({
+      uuid: decode.uuid,
+      value,
+    });
     // update된 값을 바로 반환할지, 명시적인 rest api 대로 처리할지
     if (updateUser.errorMessage) {
       const { status, errorMessage } = updateUser;
@@ -56,13 +68,15 @@ router.patch(
 router.delete(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
-    // 헤더 토큰 값 검사
-
-    // 토큰 구현 이후 header에 토큰 정보를 담아서.
-    console.log(req.headers);
+    // 사용자 일치 여부 확인
+    const decode = await verifyJWT(req.token);
     const uuid = req.params.uuid;
 
-    const deleteUser = await UserService.deleteUser(uuid);
+    if (decode.uuid !== uuid) {
+      throw { status: 401, message: "Unauthorized" };
+    }
+
+    const deleteUser = await UserService.deleteUser(decode.uuid);
     if (deleteUser.errorMessage) {
       const { status, errorMessage } = deleteUser;
       throw { status, message: errorMessage };
