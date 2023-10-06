@@ -24,15 +24,12 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+app.use("/uploads", express.static("uploads"));
 
 const { blacklist, setBlacklist } = jwtBlacklist();
 app.locals.blacklist = blacklist;
 
 // 라우터 등록
-app.get("/", (req, res) => {
-  res.render("img-upload-test", { title: "test" });
-});
 app.use("/", indexRouter);
 app.use("/users", setBlacklist, usersRouter);
 app.use("/order", orderRouter);

@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { ItemService } from "../services/item-service";
 import asyncHandler from "../utils/asyncHandler";
-import { itemImg, testMiddle } from "../middlewares/upload-itemlmg";
+import { itemImg } from "../middlewares/upload-itemlmg";
 
 const itemRouter = Router();
+const SERVER_URI = process.env.SERVER_URI;
 
 itemRouter.get(
   "/",
@@ -63,16 +64,18 @@ itemRouter.get(
 
 itemRouter.post(
   "/",
-  testMiddle,
-  itemImg.single("imgInput"),
+  itemImg.fields([{ name: "main_image", maxCount: 2 }, { name: "images" }]),
   asyncHandler(async (req, res) => {
-    console.log("item router in ", req.body);
-    const { name, price, description, main_image, images = null } = req.body;
+    console.log("item router in ", req.files);
+    const { name, price, description } = req.body;
     const category = req.category;
 
-    if (!name || !price || !description || !main_image || !category) {
+    if (!name || !price || !description || !category || !req.files.main_image) {
       throw { status: 400, message: "잘못된 요청입니다. 요청한 값을 다시 확인해주세요." };
     }
+
+    const main_image = req.files.main_image.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`);
+    const images = req.files.images?.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`) || [];
 
     const item = await ItemService.addItem({ name, price, description, main_image, images, category });
 

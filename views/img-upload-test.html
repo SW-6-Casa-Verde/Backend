@@ -7,8 +7,9 @@
   </head>
   <body>
     <form id="formBox" enctype="multipart/form-data">
-      <input id="name" />
-      <input type="file" id="img" accept="image/*" />
+      <input id="name" name="name" />
+      <input type="file" id="img" accept="image/*" name="main_image" multiple />
+      <input type="file" id="img" accept="image/*" name="images" multiple />
       <input type="submit" id="button" value="추가하기" />
     </form>
   </body>
@@ -21,31 +22,16 @@
       const name = document.querySelector("#name").value;
       const img = document.querySelector("#img").file;
 
-      const imgFormData = new FormData(formBox);
-      imgFormData.append("img", img);
+      const formData = new FormData(formBox);
 
-      console.log("요청을 보냅니다.", imgFormData);
+      formData.append("price", 2000);
+      formData.append("description", "블라블라");
+      formData.append("category_id", 1);
+
+      console.log("요청을 보냅니다.");
       const res = await fetch("http://localhost:3000/categories/1/items", {
         method: "POST",
-        headers: {
-          contentType: "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          price: 2000,
-          description: "test data",
-          main_image: [
-            {
-              data: "Buffer",
-              contentType: "String",
-            },
-            {
-              data: "Buffer",
-              contentType: "String",
-            },
-          ],
-          category_id: 1,
-        }),
+        body: formData,
       });
       const data = await res.json();
       console.log("응답 데이터 : ", data);
