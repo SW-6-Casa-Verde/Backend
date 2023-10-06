@@ -14,9 +14,10 @@ class User {
     return newUser;
   }
 
-  // static async findByUserId({ user_id }) {
-  //     const findId = await UserModel.findOne({ user_id });
-  // }
+  //order에서 사용자 받아오기
+  static async findByUserId(user_id) {
+    return await UserModel.findOne({ user_id });
+  }
 }
 
 export default User;

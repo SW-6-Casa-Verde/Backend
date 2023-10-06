@@ -43,17 +43,4 @@ app.use(function (err, req, res, next) {
   res.json({ status, message });
 });
 
-//------test------
-const mongoose = require("mongoose");
-//import { Order, OrderModel } from "./db/models/order";
-
-// const user_id = new mongoose.Types.ObjectId();
-// console.log(user_id);
-
-// async function exam() {
-//   await OrderModel.deleteMany({});
-// }
-// exam();
-// -------------test------------
-
 module.exports = app;

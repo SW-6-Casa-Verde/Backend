@@ -13,14 +13,14 @@ class Order {
   }
 
   static async findByOrderId({ order_id }) {
-    return await OrderModel.findOne({ id: order_id });
+    return await OrderModel.findOne({ order_id });
   }
 
   static async findByUserId({ userId }) {
     return await OrderModel.findOne({ user_id: userId });
   }
 
-  static async getPaginatedOrders({ query, page, perPage }) {
+  static async getPaginatedOrders(query, page, perPage) {
     const [total, orders] = await Promise.all([
       OrderModel.countDocuments(query),
       OrderModel.find(query)
@@ -42,9 +42,9 @@ class Order {
     });
   }
 
-  static async delete({ order_id }) {
-    return await OrderModel.findByIdAndDelete({ order_id });
+  static async delete(order_id) {
+    return await OrderModel.findByIdAndDelete(order_id);
   }
 }
 
-export { Order, OrderModel };
+export { Order };

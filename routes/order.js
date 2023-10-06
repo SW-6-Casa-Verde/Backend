@@ -28,8 +28,6 @@ router.get(
   "/",
   asyncHandler(async (req, res) => {
     const { uuid, role, page = 1 } = req.query;
-    //const { role, user_id } = req.body;
-    //let page = req.query.page || 1; // 기본 페이지 값 설정
 
     if (role === "admin") {
       const orders = await OrderService.getOrder("admin", Number(page), uuid);
@@ -47,12 +45,6 @@ router.get(
         data: orders.orders,
       });
     } else if (role === "user") {
-      if (!uuid) {
-        throw {
-          status: 422,
-          message: "사용자 ID가 필요합니다.",
-        };
-      }
       const orders = await OrderService.getOrder("user", Number(page), uuid);
 
       if (!orders)
@@ -78,11 +70,10 @@ router.get(
 router.patch(
   "/",
   asyncHandler(async (req, res) => {
-    //const { id, data, role } = req.body;
-    const { uuid, data, role } = req.body;
+    const { orderId, data, role } = req.body;
 
     if (role === "admin") {
-      const update = await OrderService.setOrder({ uuid, data, role });
+      const update = await OrderService.setOrder(orderId, data, role);
 
       return res.status(200).json({
         status: 200,
@@ -90,7 +81,8 @@ router.patch(
         data: update,
       });
     } else if (role === "user") {
-      const update = await OrderService.setOrder({ uuid, data, role });
+      const update = await OrderService.setOrder(orderId, data, role);
+      console.log(update);
 
       return res.status(200).json({
         status: 200,
@@ -102,26 +94,29 @@ router.patch(
 );
 
 router.delete(
-  "/:id",
+  "/:orderId",
   asyncHandler(async (req, res) => {
-    const { uuid, role } = req.user;
+    const { orderId } = req.params;
+    const { role } = req.query;
     //res.params가 아니라 req.user가 되나?
+    console.log(orderId, role);
 
     if (role === "admin") {
-      await OrderService.deleteOrder({ uuid, role });
+      await OrderService.deleteOrder({ orderId, role });
 
       return res.status(200).json({
         status: 200,
         message: "주문이 취소되었습니다.",
       });
     } else if (role === "user") {
-      await OrderService.deleteOrder({ uuid, role });
+      await OrderService.deleteOrder({ orderId, role });
 
       return res.status(200).json({
         status: 200,
         message: "주문이 취소되었습니다.",
       });
     }
+    return { errorMessage: "비회원은 접근할 수 없습니다." };
   })
 );
 

@@ -1,4 +1,5 @@
-import { Order, OrderModel } from "../db/models/order";
+import { Order } from "../db/models/order";
+import { User } from "../db/models/User";
 
 class OrderService {
   // 사용자
@@ -15,7 +16,7 @@ class OrderService {
     return order;
   }
 
-  static async getOrder({ data, page, uuid }) {
+  static async getOrder(data, page, uuid) {
     //data : user or admin
     const perPage = 10;
 
@@ -33,12 +34,21 @@ class OrderService {
 
       return { totalPage, orders };
     } else if (data === "user") {
-      const [orders, totalPage] = await Order.getPaginatedPosts(
-        { user_id: uuid },
+      //console.log(uuid);
+      const user = await User.findByUserId(uuid);
+      if (!user) {
+        throw {
+          status: 422,
+          message: "사용자 ID가 필요합니다.",
+        };
+      }
+
+      const [orders, totalPage] = await Order.getPaginatedOrders(
+        { user_id: user },
         page,
         perPage
       );
-
+      //console.log("에러나니", orders, totalPage);
       if (!orders.length) {
         throw new Error("사용자의 주문 내역이 없습니다.");
       }
@@ -46,12 +56,12 @@ class OrderService {
     }
   }
 
-  static async setOrder({ order_id, updateData, role }) {
+  static async setOrder(order_id, updateData, role) {
     const order = await Order.findByOrderId(order_id);
-
     if (!order) {
       return { errorMessage: "주문 내역이 없습니다." };
     }
+    console.log(order.order_status);
 
     if (role === "user") {
       if (
@@ -70,28 +80,36 @@ class OrderService {
     }
     // user 수정가능 주소/전화번호/이름/요청사항
     // admin 수정가능 주문상태
+    // enum 적용이 안됨 order_status 오타나도 그대로 적용됨
+    //배송상태 if문 적용안됨 db에는 오타도 그대로 터미널에서는
   }
 
-  static async deleteOrder({ uuid, role }) {
-    const order = await Order.findByOrderId(uuid);
-    //uuid가 상품아이디로 사용되나?
+  static async deleteOrder({ orderId, role }) {
+    const order = await Order.findByOrderId(orderId);
 
     if (!order) {
       return { errorMessage: "주문 내역이 없습니다." };
     }
 
     if (role === "user") {
-      await Order.delete({ order_id });
+      if (
+        order.order_status === "SHIPPED" ||
+        order.order_status === "DELIVERED"
+      ) {
+        return { errorMessage: "배송이 시작되어 취소가 불가능합니다." };
+      } else if (
+        order.order_status === "ORDER_CONFIRMED" ||
+        order.order_status === "PREPARING_FOR_SHIPMENT"
+      ) {
+        await Order.delete(orderId);
 
-      return { cancelMessage: "주문이 취소되었습니다." };
+        return { cancelMessage: "주문이 취소되었습니다." };
+      }
     } else if (role === "admin") {
-      await Order.delete({ order_id });
+      await Order.delete(orderId);
 
       return { cancelMessage: "주문이 취소되었습니다." };
     }
-
-    return { errorMessage: "비회원은 접근할 수 없습니다." };
-    //비회원도 uuid를 가지고 접근할 수 있나?
   }
 }
 
