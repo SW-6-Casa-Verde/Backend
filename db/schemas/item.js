@@ -18,7 +18,12 @@ const ItemSchema = new Schema(
     },
     main_image: {
       // 대표 이미지
-      type: [String],
+      type: [
+        {
+          data: Buffer,
+          contentType: String,
+        },
+      ],
       required: true,
     },
     images: [String], // 상세 이미지(옵션)

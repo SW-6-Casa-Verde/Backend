@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ItemService } from "../services/item-service";
 import asyncHandler from "../utils/asyncHandler";
+import { itemImg, testMiddle } from "../middlewares/upload-itemlmg";
 
 const itemRouter = Router();
 
@@ -62,7 +63,10 @@ itemRouter.get(
 
 itemRouter.post(
   "/",
+  testMiddle,
+  itemImg.single("imgInput"),
   asyncHandler(async (req, res) => {
+    console.log("item router in ", req.body);
     const { name, price, description, main_image, images = null } = req.body;
     const category = req.category;
 

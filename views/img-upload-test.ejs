@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="formBox" enctype="multipart/form-data">
+      <input id="name" />
+      <input type="file" id="img" accept="image/*" />
+      <input type="submit" id="button" value="추가하기" />
+    </form>
+  </body>
+  <script>
+    const formBox = document.querySelector("#formBox");
+
+    formBox.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.querySelector("#name").value;
+      const img = document.querySelector("#img").file;
+
+      const imgFormData = new FormData(formBox);
+      imgFormData.append("img", img);
+
+      console.log("요청을 보냅니다.", imgFormData);
+      const res = await fetch("categories/1/items", {
+        method: "post",
+        body: JSON.stringify({
+          name,
+          test: "test data",
+          imgFormData,
+        }),
+      });
+      const data = await res.json();
+      console.log("응답 데이터 : ", data);
+    });
+  </script>
+</html>
