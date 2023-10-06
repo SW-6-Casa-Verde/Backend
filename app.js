@@ -10,6 +10,7 @@ import jwtBlacklist from "./middlewares/jwt-blacklist";
 import indexRouter from "./routes";
 import usersRouter from "./routes/users";
 import orderRouter from "./routes/order";
+import { categoryRouter } from "./routes/categories";
 
 const app = express();
 app.use(cors());
@@ -31,6 +32,7 @@ app.locals.blacklist = blacklist;
 app.use("/", indexRouter);
 app.use("/users", setBlacklist, usersRouter);
 app.use("/order", orderRouter);
+app.use("/categories", categoryRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
