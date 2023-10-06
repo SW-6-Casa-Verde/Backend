@@ -1,44 +1,21 @@
 import { Router } from "express";
-import OrderService from "../services/orderService";
+import OrderService from "../services/order-service";
 import asyncHandler from "../utils/asyncHandler";
+import validateOrder from "../validators/orderValidator";
 const router = Router();
 
 //orderItem 미들웨어 구매상품까지 같이 ?
 //주문하기
 router.post(
-  "/buy",
+  "/",
   asyncHandler(async (req, res, next) => {
-    const {
-      total_price,
-      name,
-      address,
-      phone,
-      request,
-      pay_Method,
-      order_status,
-      user_id,
-    } = req.body;
+    const { error, value } = await validateOrder(req.body);
 
-    if (!total_price || !name || !address || !phone || !user_id) {
-      return res.status(422).json({
-        status: 422,
-        message: "요청한 값을 다시 확인해주세요.",
-      });
-    }
+    if (error) throw { status: 422, message: "주문정보를 다시 확인해주세요." };
     console.log(req.body);
 
-    const newOrder = await OrderService.addOrder({
-      total_price,
-      name,
-      address,
-      phone,
-      request,
-      pay_Method,
-      order_status,
-      user_id,
-    });
+    const newOrder = await OrderService.addOrder(value);
 
-    console.log(newOrder);
     res.status(201).json({
       status: 201,
       data: newOrder,
@@ -48,13 +25,12 @@ router.post(
 
 //주문조회 (사용자/관리자)
 router.get(
-  "/check",
+  "/",
   asyncHandler(async (req, res) => {
-    const { role, id } = req.body;
-    let page = req.query.page || 1; // 기본 페이지 값 설정
+    const { uuid, role, page = 1 } = req.query;
 
     if (role === "admin") {
-      const orders = await OrderService.getOrder("admin", Number(page));
+      const orders = await OrderService.getOrder("admin", Number(page), uuid);
 
       if (!orders)
         throw {
@@ -69,13 +45,7 @@ router.get(
         data: orders.orders,
       });
     } else if (role === "user") {
-      if (!id) {
-        throw {
-          status: 422,
-          message: "사용자 ID가 필요합니다.",
-        };
-      }
-      const orders = await OrderService.getOrder(id);
+      const orders = await OrderService.getOrder("user", Number(page), uuid);
 
       if (!orders)
         throw {
@@ -98,12 +68,12 @@ router.get(
 );
 
 router.patch(
-  "/edit",
+  "/",
   asyncHandler(async (req, res) => {
-    const { id, data, role } = req.body;
+    const { orderId, data, role } = req.body;
 
     if (role === "admin") {
-      const update = await OrderService.setOrder({ id, data, role });
+      const update = await OrderService.setOrder(orderId, data, role);
 
       return res.status(200).json({
         status: 200,
@@ -111,7 +81,8 @@ router.patch(
         data: update,
       });
     } else if (role === "user") {
-      const update = await OrderService.setOrder({ id, data, role });
+      const update = await OrderService.setOrder(orderId, data, role);
+      console.log(update);
 
       return res.status(200).json({
         status: 200,
@@ -123,9 +94,12 @@ router.patch(
 );
 
 router.delete(
-  "/delete",
+  "/:orderId",
   asyncHandler(async (req, res) => {
-    const { orderId, role, currentId } = req.body;
+    const { orderId } = req.params;
+    const { role } = req.query;
+    //res.params가 아니라 req.user가 되나?
+    console.log(orderId, role);
 
     if (role === "admin") {
       await OrderService.deleteOrder({ orderId, role });
@@ -135,13 +109,14 @@ router.delete(
         message: "주문이 취소되었습니다.",
       });
     } else if (role === "user") {
-      await OrderService.deleteOrder({ orderId, role, currentId });
+      await OrderService.deleteOrder({ orderId, role });
 
       return res.status(200).json({
         status: 200,
         message: "주문이 취소되었습니다.",
       });
     }
+    return { errorMessage: "비회원은 접근할 수 없습니다." };
   })
 );
 
