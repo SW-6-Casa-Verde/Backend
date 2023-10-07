@@ -1,6 +1,4 @@
-import { Order } from "../db/models/order";
-import { OrderItem } from "../db/models/orderItem";
-//import { User } from "../db/models/User";
+import { Order, User } from "../db";
 
 class OrderService {
   // 사용자
@@ -41,15 +39,9 @@ class OrderService {
     //console.log(order.order_status);
 
     if (role === "user") {
-      if (
-        order.order_status === "SHIPPED" ||
-        order.order_status === "DELIVERED"
-      ) {
+      if (order.order_status === "SHIPPED" || order.order_status === "DELIVERED") {
         return { errorMessage: "배송이 시작되어 수정이 불가능합니다." };
-      } else if (
-        order.order_status === "ORDER_CONFIRMED" ||
-        order.order_status === "PREPARING_FOR_SHIPMENT"
-      ) {
+      } else if (order.order_status === "ORDER_CONFIRMED" || order.order_status === "PREPARING_FOR_SHIPMENT") {
         return await Order.update(order_id, updateData);
       }
     } else if (role === "admin") {
@@ -85,4 +77,4 @@ class OrderService {
   }
 }
 
-export default OrderService;
+export { OrderService };

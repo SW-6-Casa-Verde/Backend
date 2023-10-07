@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { CategoryService } from "../services/category-service";
+import { CategoryService } from "../services";
 import { itemRouter } from "./items";
 import asyncHandler from "../utils/asyncHandler";
+import jwtAdminRole from "../middlewares/jwt-admin-role";
 
 const categoryRouter = Router();
 
+// 카테고리 전체 조회
 categoryRouter.get(
   "/",
   asyncHandler(async (req, res) => {
@@ -18,8 +20,10 @@ categoryRouter.get(
   })
 );
 
+//카테고리 생성
 categoryRouter.post(
   "/",
+  jwtAdminRole,
   asyncHandler(async (req, res) => {
     // 관리자 인증 미들웨어 추가
     const { name } = req.body;
@@ -42,8 +46,10 @@ categoryRouter.post(
   })
 );
 
+//카테고리 수정
 categoryRouter.put(
   "/:id",
+  jwtAdminRole,
   asyncHandler(async (req, res) => {
     const id = Number(req.params.id);
 
@@ -64,8 +70,10 @@ categoryRouter.put(
   })
 );
 
+// 카테고리 삭제
 categoryRouter.delete(
   "/:id",
+  jwtAdminRole,
   asyncHandler(async (req, res) => {
     const id = Number(req.params.id);
 
@@ -84,6 +92,7 @@ categoryRouter.use(
   "/:id/items",
   async (req, res, next) => {
     const { id } = req.params;
+    console.log("category router in ");
 
     const category = await CategoryService.getCategory({ id });
 

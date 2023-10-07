@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { createJWT } from "../utils/jwt";
-import { User } from "../db/models/user";
+import { User } from "../db";
 
 class LoginService {
   static async loginUser(user) {
@@ -17,15 +17,7 @@ class LoginService {
       return { status: 401, errorMessage };
     }
 
-    const {
-      uuid,
-      email: username,
-      password: usrpw,
-      address,
-      phone,
-      name,
-      role,
-    } = isEmailMatch;
+    const { uuid, email: username, password: usrpw, address, phone, name, role } = isEmailMatch;
     const usr = { uuid, email: username, password: usrpw, role };
     const token = createJWT(usr);
     const authUserInfo = { uuid, email, address, phone, name };
@@ -34,4 +26,4 @@ class LoginService {
   }
 }
 
-export default LoginService;
+export { LoginService };

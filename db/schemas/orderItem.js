@@ -26,4 +26,4 @@ const OrderItemSchema = new Schema({
   },
 });
 
-export default OrderItemSchema;
+export { OrderItemSchema };

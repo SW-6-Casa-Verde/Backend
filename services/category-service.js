@@ -1,4 +1,4 @@
-import { Category } from "../db/models/category";
+import { Category } from "../db";
 
 class CategoryService {
   // Create

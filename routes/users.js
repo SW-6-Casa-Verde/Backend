@@ -1,13 +1,13 @@
 import { Router } from "express";
-import UserService from "../services/user-service";
+import { UserService } from "../services";
 import asyncHandler from "../utils/asyncHandler";
 import { verifyJWT } from "../utils/jwt";
-import validateUserUpdate from "../validators/userUpdateValidator";
-const router = Router();
+import { validateUserUpdate } from "../validators";
+const usersRouter = Router();
 
 // 사용자 정보 조회 (jwt 정보 활용 예정)
 // :uuid로 받고 role에 따라 분기 처리
-router.get(
+usersRouter.get(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
     // 사용자 일치 여부 확인
@@ -18,20 +18,17 @@ router.get(
       throw { status: 401, message: "Unauthorized" };
     }
 
-    // 유저 아이디 고정 (토큰 구현 전)
     const userInfo = await UserService.getUserInfo(decode.uuid);
     if (userInfo.errorMessage) {
       const { status, errorMessage } = userInfo;
       throw { status, message: errorMessage };
     }
-    res
-      .status(200)
-      .json({ status: 200, message: "사용자 조회 성공.", data: userInfo });
-  }),
+    res.status(200).json({ status: 200, message: "사용자 조회 성공.", data: userInfo });
+  })
 );
 
 // 사용자 정보 수정 (jwt 정보 활용 예정)
-router.patch(
+usersRouter.patch(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
     // 사용자 일치 여부 확인
@@ -59,11 +56,11 @@ router.patch(
       throw { status, message: errorMessage };
     }
     res.status(200).json({ status: 204, message: "사용자 정보 수정 성공." });
-  }),
+  })
 );
 
 // 사용자 삭제 (회원 탈퇴) (jwt 정보 활용 예정)
-router.delete(
+usersRouter.delete(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
     // 사용자 일치 여부 확인
@@ -80,7 +77,7 @@ router.delete(
       throw { status, message: errorMessage };
     }
     res.status(200).json({ status: 204, message: "사용자 삭제 성공." });
-  }),
+  })
 );
 
-export default router;
+export { usersRouter };
