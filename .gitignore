@@ -1,0 +1,32 @@
+# Node.js 및 npm 관련 파일과 디렉토리
+node_modules/
+package-lock.json
+npm-debug.log
+yarn-error.log
+
+# Babel 관련 파일과 디렉토리
+dist/
+
+# MongoDB 관련 파일 (data 디렉토리 등)
+/data/
+*.db
+*.log
+*.journal
+
+test.js
+
+# 개발 환경 파일
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 사용자 특정 파일 및 디렉토리 (예: 개인 설정 파일)
+config.js
+secrets/
+
+# 기타 설정 파일 (IDE 등)  
+.idea/
+.vscode/
+uploads/images/*
