@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
 import dbBoot from "./db";
-import jwtBlacklist from "./middlewares/jwt-blacklist";
+import jwtLoginRequired from "./middlewares/jwt-login-required";
 
 // 코드 포맷팅 필요
 import indexRouter from "./routes";
@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
-const { blacklist, setBlacklist } = jwtBlacklist();
+const { blacklist, setBlacklist } = jwtLoginRequired();
 app.locals.blacklist = blacklist;
 
 // 프론트 라우터 등록

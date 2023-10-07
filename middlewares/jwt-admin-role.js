@@ -4,6 +4,7 @@ import { userRole } from "../constants";
 export default async function jwtAdminRole(req, res, next) {
   const token = req.cookies.token;
   const decode = await verifyJWT(token);
+  // 토큰 만료 체크
   if (decode.errorMessage) {
     const { status, errorMessage } = decode;
     next({ status, message: errorMessage });
