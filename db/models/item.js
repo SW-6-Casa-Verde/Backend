@@ -5,8 +5,8 @@ const ItemModel = model("Item", ItemSchema);
 
 class Item {
   // CREATE
-  static async create({ name, price, description, main_image, images, category }) {
-    return await ItemModel.create({ name, price, description, main_image, images, category });
+  static async create({ name, price, description, main_images, images, category }) {
+    return await ItemModel.create({ name, price, description, main_images, images, category });
   }
 
   // READ

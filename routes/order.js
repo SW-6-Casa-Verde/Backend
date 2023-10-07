@@ -1,10 +1,9 @@
 import { Router } from "express";
-import OrderService from "../services/order-service";
-import OrderItemService from "../services/orderItem-service";
+import { OrderService, OrderItemService } from "../services";
 import asyncHandler from "../utils/asyncHandler";
-import validateOrder from "../validators/orderValidator";
-//import jwtAdminRole from "../middleware/jwt-admin-role";
-import jwtBlacklist from "../middleware/jwt-blacklist";
+import { validateOrder } from "../validators";
+import jwtLoginRequired from "../middleware/jwt-login-required";
+
 const router = Router();
 
 //orderItem 미들웨어 구매상품까지 같이 ?
@@ -59,7 +58,7 @@ router.post(
 //주문조회 (사용자/관리자) => 권한은 필요가 없음 => 관리자인지 사용자인지 확인 => 토큰이 있는지만 확인하면 => 블랙리스트 미들웨어
 router.get(
   "/",
-  jwtBlacklist,
+  jwtLoginRequired,
   asyncHandler(async (req, res) => {
     const { page = 1 } = req.params;
 

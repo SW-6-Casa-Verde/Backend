@@ -29,3 +29,4 @@ secrets/
 # 기타 설정 파일 (IDE 등)  
 .idea/
 .vscode/
+uploads/images/*

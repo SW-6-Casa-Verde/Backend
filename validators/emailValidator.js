@@ -9,4 +9,4 @@ async function validateEmail(email) {
   return emailJoiSchema.validate(email);
 }
 
-export default validateEmail;
+export { validateEmail };

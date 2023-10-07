@@ -1,9 +1,6 @@
 import { Router } from "express";
-import UserService from "../services/user-service";
-import LoginService from "../services/login-service";
-import validateUser from "../validators/userValidator";
-import validateLogin from "../validators/loginValidator";
-import validateEmail from "../validators/emailValidator";
+import { UserService, LoginService } from "../services";
+import { validateUser, validateLogin, validateEmail } from "../validators";
 import asyncHandler from "../utils/asyncHandler";
 import jwtBlacklist from "../middlewares/jwt-blacklist";
 import { verifyJWT } from "../utils/jwt";
@@ -26,10 +23,8 @@ router.post(
       const message = isEmailDuplicate.errorMessage;
       throw { status: 409, message: message };
     }
-    res
-      .status(200)
-      .json({ status: 200, message: "사용 가능한 이메일 주소입니다." });
-  }),
+    res.status(200).json({ status: 200, message: "사용 가능한 이메일 주소입니다." });
+  })
 );
 
 // 회원 가입 요청
@@ -45,10 +40,8 @@ router.post(
       const { status, errorMessage } = newUser;
       throw { status, message: errorMessage };
     }
-    res
-      .status(200)
-      .json({ status: 200, message: "회원 가입이 완료되었습니다." });
-  }),
+    res.status(200).json({ status: 200, message: "회원 가입이 완료되었습니다." });
+  })
 );
 
 router.get(
@@ -62,10 +55,8 @@ router.get(
     }
     // 다음 라우터로 못가나..?
     // 로그인 유지는 세션있어야 가능할듯..
-    res
-      .status(200)
-      .json({ status: 200, message: "로그인 되어 있는 사용자입니다." });
-  }),
+    res.status(200).json({ status: 200, message: "로그인 되어 있는 사용자입니다." });
+  })
 );
 
 router.post(
@@ -89,10 +80,8 @@ router.post(
     // JWT를 쿠키에 설정
     // 쿠키를 주는 것까지는 했으니 세션에 담아두기 위해
     res.cookie("token", token, { httpOnly: true });
-    res
-      .status(200)
-      .json({ status: 200, message: "로그인 성공.", data: authUserInfo });
-  }),
+    res.status(200).json({ status: 200, message: "로그인 성공.", data: authUserInfo });
+  })
 );
 
 router.post(
@@ -107,7 +96,7 @@ router.post(
 
     res.clearCookie("token");
     res.status(200).json({ status: 204, message: "로그아웃 성공." });
-  }),
+  })
 );
 
 export default router;

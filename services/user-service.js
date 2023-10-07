@@ -1,4 +1,4 @@
-import { User } from "../db/models/User";
+import { User } from "../db";
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 
@@ -92,4 +92,4 @@ class UserService {
   }
 }
 
-export default UserService;
+export { UserService };

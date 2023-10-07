@@ -1,9 +1,10 @@
-import { Item } from "../db/models/item"; // db/index.js 완성되면 바꾸기 -> ../db
+import { Item } from "../db";
+import fs from "fs";
 
 class ItemService {
   // Create
-  static async addItem({ name, price, description, main_image, images, category }) {
-    return await Item.create({ name, price, description, main_image, images, category });
+  static async addItem({ name, price, description, main_images, images, category }) {
+    return await Item.create({ name, price, description, main_images, images, category });
   }
 
   // Read
@@ -32,10 +33,24 @@ class ItemService {
   // Update
   static async setItem({ id }, query) {
     const item = await Item.findByQuery({ id });
+    console.log("setItem in");
 
     if (!item) {
       const errorMessage = "해당 상품이 존재하지 않습니다.";
       return { errorMessage };
+    }
+
+    if (query.main_images && query.images) {
+      item.main_images.forEach((imgUrl) =>
+        fs.unlink(imgUrl.replace(process.env.SERVER_URI + "/", ""), (err) => {
+          if (err) console.log("기존 사진 파일 삭제 실패 : ", err);
+        })
+      );
+      item.images.forEach((imgUrl) =>
+        fs.unlink(imgUrl.replace(process.env.SERVER_URI + "/", ""), (err) => {
+          if (err) console.log("기존 사진 파일 삭제 실패 : ", err);
+        })
+      );
     }
 
     return await Item.updateByQuery({ id }, query);
