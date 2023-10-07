@@ -5,7 +5,7 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
 import dbBoot from "./db";
-import jwtBlacklist from "./middlewares/jwt-blacklist";
+import jwtLoginRequired from "./middlewares/jwt-login-required";
 
 import indexRouter from "./routes";
 import usersRouter from "./routes/users";
@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-const { blacklist, setBlacklist } = jwtBlacklist();
+const { blacklist, setBlacklist } = jwtLoginRequired();
 app.locals.blacklist = blacklist;
 
 // 라우터 등록
