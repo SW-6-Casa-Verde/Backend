@@ -1,11 +1,6 @@
 import Joi from "joi";
 
-const orderStatus = [
-  "ORDER_CONFIRMED",
-  "PREPARING_FOR_SHIPMENT",
-  "SHIPPED",
-  "DELIVERED",
-];
+const orderStatus = ["ORDER_CONFIRMED", "PREPARING_FOR_SHIPMENT", "SHIPPED", "DELIVERED"];
 const payMethod = ["CARD", "BANK_TRANSFER"];
 
 // Joi 스키마 정의
@@ -29,4 +24,4 @@ async function validateOrder(user) {
   return orderJoiSchema.validate(user);
 }
 
-export default validateOrder;
+export { validateOrder };

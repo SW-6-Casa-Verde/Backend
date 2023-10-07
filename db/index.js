@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 dotenv.config();
 import { User } from "./models/user";
+import { createJWT } from "../utils/jwt";
 
 mongoose.connect(`${process.env.DATABASE_URL}/CasaVerde`);
 
@@ -27,6 +28,10 @@ async function boot() {
       role: "ADMIN",
     });
   }
+
+  // 관리자 jwt 확인
+  // const { uuid, email, password } = adminCheck;
+  // console.log(createJWT({ uuid, email, password, role: "USER" }));
 }
 
 boot();

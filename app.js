@@ -7,11 +7,13 @@ import cors from "cors";
 import dbBoot from "./db";
 import jwtBlacklist from "./middlewares/jwt-blacklist";
 
+// 코드 포맷팅 필요
 import indexRouter from "./routes";
 import usersRouter from "./routes/users";
 import orderRouter from "./routes/order";
 import { categoryRouter } from "./routes/categories";
 import { viewsRouter } from "./routes/views";
+import { itemRouter } from "./routes/items";
 
 const app = express();
 app.use(cors());
@@ -33,10 +35,11 @@ app.locals.blacklist = blacklist;
 app.use("/", viewsRouter);
 
 // API 라우터 등록
-app.use("api/", indexRouter);
-app.use("api/users", setBlacklist, usersRouter);
-app.use("api/order", orderRouter);
-app.use("api/categories", categoryRouter);
+app.use("/", indexRouter);
+app.use("/users", setBlacklist, usersRouter);
+app.use("/order", orderRouter);
+app.use("/categories", categoryRouter);
+app.use("/items", itemRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
