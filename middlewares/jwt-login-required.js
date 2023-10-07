@@ -1,3 +1,5 @@
+import { verifyJWT } from "../utils/jwt";
+
 export default function jwtLoginRequired() {
   const blacklist = [];
 
@@ -11,7 +13,7 @@ export default function jwtLoginRequired() {
       // 바로 돌려보낸다면?
       // return res.status(401).redirect("/");
       const { status, errorMessage } = decode;
-      throw { status, message: errorMessage };
+      next({ status, message: errorMessage });
     }
 
     const { role, uuid } = decode;

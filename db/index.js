@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 dotenv.config();
 import { User } from "./models/user";
 
@@ -16,11 +17,12 @@ async function boot() {
   // 관리자 유저 기본 데이터
   const adminCheck = await User.findByUserId("admin_id");
   // 관리자 데이터가 없으면 넣음.
+  const adminPassword = await bcrypt.hash("adminadmin@", 10);
   if (!adminCheck) {
     await User.create({
       uuid: "admin_id",
       email: "admin@admin.com",
-      password: "adminadmin@",
+      password: adminPassword,
       address: "서울특별시 구구 동동",
       phone: "010-0000-0000",
       name: "admin",

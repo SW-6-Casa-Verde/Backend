@@ -4,6 +4,7 @@ class CategoryService {
   // Create
   static async addCategory({ id, name }) {
     const category = await Category.findById({ id });
+    console.log(id, name);
 
     if (category) {
       const errorMessage = "해당 아이디가 이미 존재합니다.";

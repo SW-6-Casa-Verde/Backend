@@ -28,6 +28,7 @@ categoryRouter.post(
     // 관리자 인증 미들웨어 추가
     const { name } = req.body;
     const id = Number(req.body.id);
+    console.log(name, id);
 
     if (!id || !name) {
       throw {
