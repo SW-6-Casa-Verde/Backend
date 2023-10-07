@@ -5,8 +5,6 @@ import { verifyJWT } from "../utils/jwt";
 import validateUserUpdate from "../validators/userUpdateValidator";
 const router = Router();
 
-// const { setBlacklist } = jwtBlacklist();
-
 // 사용자 정보 조회 (jwt 정보 활용 예정)
 // :uuid로 받고 role에 따라 분기 처리
 router.get(
@@ -20,7 +18,6 @@ router.get(
       throw { status: 401, message: "Unauthorized" };
     }
 
-    // 유저 아이디 고정 (토큰 구현 전)
     const userInfo = await UserService.getUserInfo(decode.uuid);
     if (userInfo.errorMessage) {
       const { status, errorMessage } = userInfo;
