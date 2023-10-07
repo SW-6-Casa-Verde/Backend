@@ -5,8 +5,8 @@ const CategoryModel = model("Category", CategorySchema);
 
 class Category {
   // Create
-  static async create({ newCategory }) {
-    return await CategoryModel.create(newCategory);
+  static async create({ id, name }) {
+    return await CategoryModel.create({ id, name });
   }
 
   // Read
