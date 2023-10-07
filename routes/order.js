@@ -34,7 +34,7 @@ orderRouter.post(
           order_id: newOrder._id, // 새로 생성된 주문의 _id를 사용
         });
         return newOrderItem;
-      }),
+      })
     );
 
     const newOrderItem = await OrderItemService.addOrderItem(orderedItems);
@@ -52,7 +52,7 @@ orderRouter.post(
       data: newOrder,
       items: newOrderItem,
     });
-  }),
+  })
 );
 
 //주문조회 (사용자/관리자) => 권한은 필요가 없음 => 관리자인지 사용자인지 확인 => 토큰이 있는지만 확인하면 => 블랙리스트 미들웨어
@@ -79,8 +79,8 @@ orderRouter.get(
       });
     } else if (role === "user") {
       const orders = await OrderService.getOrder(
-        { uuid: req.user.uuid },
-        Number(page),
+        { user_id: req.user.uuid },
+        Number(page)
       );
 
       if (orders.errorMessage)
@@ -95,10 +95,11 @@ orderRouter.get(
         data: orders,
       });
     }
-  }),
+  })
 );
 
 //user, admin 따로 경로 만들기
+// 권한을 따로 줘야함
 orderRouter.patch(
   "/",
   asyncHandler(async (req, res) => {
@@ -134,7 +135,7 @@ orderRouter.patch(
         data: update,
       });
     }
-  }),
+  })
 );
 
 // user, admin 주문삭제 라우터 따로 만들기
@@ -160,7 +161,7 @@ orderRouter.delete(
       status: 200,
       message: order.message,
     });
-  }),
+  })
 );
 
 export { orderRouter };
