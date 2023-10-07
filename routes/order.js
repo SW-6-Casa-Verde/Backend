@@ -80,7 +80,7 @@ router.get(
       });
     } else if (role === "user") {
       const orders = await OrderService.getOrder(
-        { uuid: req.user.uuid },
+        { user_id: req.user.uuid },
         Number(page)
       );
 
