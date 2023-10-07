@@ -18,7 +18,6 @@ router.get(
       throw { status: 401, message: "Unauthorized" };
     }
 
-    // 유저 아이디 고정 (토큰 구현 전)
     const userInfo = await UserService.getUserInfo(decode.uuid);
     if (userInfo.errorMessage) {
       const { status, errorMessage } = userInfo;
