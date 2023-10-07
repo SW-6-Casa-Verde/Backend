@@ -5,10 +5,7 @@ class OrderItemService {
     const order = await OrderItem.create(data);
 
     if (!order) {
-      throw {
-        status: 500,
-        message: "주문을 생성하는 동안 오류가 발생했습니다.",
-      };
+      return { errorMessage: "주문 상품을 생성하는 동안 오류가 발생했습니다." };
     }
 
     return order;

@@ -3,6 +3,8 @@ import OrderService from "../services/order-service";
 import OrderItemService from "../services/orderItem-service";
 import asyncHandler from "../utils/asyncHandler";
 import validateOrder from "../validators/orderValidator";
+//import jwtAdminRole from "../middleware/jwt-admin-role";
+import jwtBlacklist from "../middleware/jwt-blacklist";
 const router = Router();
 
 //orderItem 미들웨어 구매상품까지 같이 ?
@@ -14,11 +16,16 @@ router.post(
     const { error, value } = await validateOrder(req.body);
     const { orderItems, ...orderData } = value;
 
-    console.log(orderItems, "000", orderData);
-
     if (error) throw { status: 422, message: "주문정보를 다시 확인해주세요." };
 
     const newOrder = await OrderService.addOrder(orderData);
+
+    if (newOrder.errorMessage) {
+      throw {
+        status: 404,
+        message: newOrder.errorMessage,
+      };
+    }
 
     const orderedItems = await Promise.all(
       orderItems.map(async (orderItem) => {
@@ -30,10 +37,17 @@ router.post(
         return newOrderItem;
       })
     );
-    console.log(orderedItems);
 
     const newOrderItem = await OrderItemService.addOrderItem(orderedItems);
 
+    if (newOrderItem.errorMessage) {
+      throw {
+        status: 404,
+        message: newOrderItem.errorMessage,
+      };
+    }
+
+    // res.render로 수정
     res.status(201).json({
       status: 201,
       data: newOrder,
@@ -42,19 +56,20 @@ router.post(
   })
 );
 
-//주문조회 (사용자/관리자)
+//주문조회 (사용자/관리자) => 권한은 필요가 없음 => 관리자인지 사용자인지 확인 => 토큰이 있는지만 확인하면 => 블랙리스트 미들웨어
 router.get(
   "/",
+  jwtBlacklist,
   asyncHandler(async (req, res) => {
-    const { uuid, role, page = 1 } = req.query;
+    const { page = 1 } = req.params;
 
     if (role === "admin") {
-      const orders = await OrderService.getOrder("admin", Number(page), uuid);
+      const orders = await OrderService.getOrder({}, Number(page));
 
-      if (!orders)
+      if (orders.errorMessage)
         throw {
           status: 422,
-          message: "주문 내역을 가져오는 데 문제가 있습니다.",
+          message: orders.errorMessage,
         };
 
       return res.status(200).json({
@@ -64,12 +79,15 @@ router.get(
         data: orders.orders,
       });
     } else if (role === "user") {
-      const orders = await OrderService.getOrder("user", Number(page), uuid);
+      const orders = await OrderService.getOrder(
+        { uuid: req.user.uuid },
+        Number(page)
+      );
 
-      if (!orders)
+      if (orders.errorMessage)
         throw {
           status: 422,
-          message: "주문 내역을 가져오는 데 문제가 있습니다.",
+          message: orders.errorMessage,
         };
 
       return res.status(200).json({
@@ -77,15 +95,11 @@ router.get(
         message: "주문 목록 구매자 페이지입니다.",
         data: orders,
       });
-    } else {
-      throw {
-        status: 422,
-        message: "올바르지 않은 역할(role)입니다.",
-      };
     }
   })
 );
 
+//user, admin 따로 경로 만들기
 router.patch(
   "/",
   asyncHandler(async (req, res) => {
@@ -94,6 +108,12 @@ router.patch(
     if (role === "admin") {
       const update = await OrderService.setOrder(orderId, data, role);
 
+      if (update.errorMessage)
+        throw {
+          status: 422,
+          message: update.errorMessage,
+        };
+
       return res.status(200).json({
         status: 200,
         message: "배송상태가 수정되었습니다.",
@@ -101,7 +121,13 @@ router.patch(
       });
     } else if (role === "user") {
       const update = await OrderService.setOrder(orderId, data, role);
-      console.log(update);
+      // console.log(update);
+
+      if (update.errorMessage)
+        throw {
+          status: 422,
+          message: update.errorMessage,
+        };
 
       return res.status(200).json({
         status: 200,
@@ -112,6 +138,7 @@ router.patch(
   })
 );
 
+// user, admin 주문삭제 라우터 따로 만들기
 router.delete(
   "/:orderId",
   asyncHandler(async (req, res) => {
