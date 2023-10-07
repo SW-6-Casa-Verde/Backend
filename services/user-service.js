@@ -62,8 +62,10 @@ class UserService {
   }
 
   static async setUserInfo({ uuid, value }) {
+    const errorMessage = "사용자 정보 수정에 실패하였습니다.";
+
     if ("role" in value && value.role !== "USER") {
-      delete value.role;
+      return { status: 400, errorMessage };
     }
 
     if ("password" in value) {
@@ -75,10 +77,11 @@ class UserService {
       uuid,
       updateData: value,
     });
+    
     if (!updatedUserInfo) {
-      const errorMessage = "사용자 정보 수정에 실패하였습니다.";
       return { status: 400, errorMessage };
     }
+
     return updatedUserInfo;
   }
 
