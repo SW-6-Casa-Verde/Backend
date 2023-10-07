@@ -99,6 +99,7 @@ orderRouter.get(
 );
 
 //user, admin 따로 경로 만들기
+// 권한을 따로 줘야함
 orderRouter.patch(
   "/",
   asyncHandler(async (req, res) => {
