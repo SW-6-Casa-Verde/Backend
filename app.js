@@ -29,12 +29,14 @@ app.use("/uploads", express.static("uploads"));
 const { blacklist, setBlacklist } = jwtBlacklist();
 app.locals.blacklist = blacklist;
 
-// 라우터 등록
-app.use("/", indexRouter);
-app.use("/users", setBlacklist, usersRouter);
-app.use("/order", orderRouter);
-app.use("/categories", categoryRouter);
-app.use("/views", viewsRouter);
+// 프론트 라우터 등록
+app.use("/", viewsRouter);
+
+// API 라우터 등록
+app.use("api/", indexRouter);
+app.use("api/users", setBlacklist, usersRouter);
+app.use("api/order", orderRouter);
+app.use("api/categories", categoryRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

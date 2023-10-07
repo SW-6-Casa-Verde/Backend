@@ -29,13 +29,13 @@
       formData.append("category_id", 1);
 
       console.log("요청을 보냅니다.");
-      /*const res = await fetch("http://localhost:3000/categories/1/items", {
+      /*const res = await fetch(`/categories/1/items`, {
         method: "post",
         body: formData,
       });
       const data = await res.json();*/
       //image update
-      const res = await fetch("http://localhost:3000/categories/1/items/8vUtDJuBS9bvNU6NqVKgW/images", {
+      const res = await fetch(`/categories/1/items/8vUtDJuBS9bvNU6NqVKgW/images`, {
         method: "put",
         body: formData,
       });

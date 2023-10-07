@@ -1,5 +1,4 @@
-import { Order } from "../db/models/order";
-import { User } from "../db/models/user";
+import { Order, User } from "../db";
 
 class OrderService {
   // 사용자
@@ -93,4 +92,4 @@ class OrderService {
   }
 }
 
-export default OrderService;
+export { OrderService };

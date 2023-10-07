@@ -117,9 +117,9 @@ itemRouter.put(
       throw { status: 400, message: "잘못된 요청입니다. 요청한 값을 다시 확인해주세요." };
     }
 
-    await ItemService.setItem({ id }, { main_images, images });
+    const item = await ItemService.setItem({ id }, { main_images, images });
 
-    res.status(200).json({ message: "success" });
+    res.status(200).json({ message: "success", item });
   })
 );
 

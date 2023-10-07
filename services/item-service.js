@@ -1,4 +1,4 @@
-import { Item } from "../db/models/item"; // db/index.js 완성되면 바꾸기 -> ../db
+import { Item } from "../db";
 import fs from "fs";
 
 class ItemService {

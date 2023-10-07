@@ -1,7 +1,7 @@
 import { Router } from "express";
-import OrderService from "../services/order-service";
+import { OrderService } from "../services";
 import asyncHandler from "../utils/asyncHandler";
-import validateOrder from "../validators/orderValidator";
+import { validateOrder } from "../validators";
 const router = Router();
 
 //orderItem 미들웨어 구매상품까지 같이 ?
