@@ -10,6 +10,16 @@ const payMethod = ["CARD", "BANK_TRANSFER"];
 
 // Joi 스키마 정의
 const orderJoiSchema = Joi.object({
+  orderItems: Joi.array()
+    .required()
+    .items(
+      Joi.object({
+        id: Joi.number().required(),
+        quantity: Joi.number().min(1).required(),
+        unit_price: Joi.number().required(),
+        item_id: Joi.string().hex().length(24).required(),
+      })
+    ),
   total_price: Joi.number().required(),
   name: Joi.string().required(),
   address: Joi.string().required(),

@@ -16,7 +16,7 @@ class Order {
     return await OrderModel.findOne({ order_id });
   }
 
-  static async findByUserId({ userId }) {
+  static async findByUserId(userId) {
     return await OrderModel.findOne({ user_id: userId });
   }
 
