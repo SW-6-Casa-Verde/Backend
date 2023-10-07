@@ -1,6 +1,8 @@
 import { Schema } from "mongoose";
 import { userRole } from "../../constants";
 
+const { USER, ADMIN } = userRole;
+
 const UserSchema = new Schema({
   // 유저 식별 필드
   uuid: {
@@ -30,7 +32,7 @@ const UserSchema = new Schema({
   },
   role: {
     type: String,
-    enum: userRole,
+    enum: [USER, ADMIN],
   },
 });
 
