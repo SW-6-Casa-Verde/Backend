@@ -3,11 +3,11 @@ import { UserService } from "../services";
 import asyncHandler from "../utils/asyncHandler";
 import { verifyJWT } from "../utils/jwt";
 import { validateUserUpdate } from "../validators";
-const router = Router();
+const usersRouter = Router();
 
 // 사용자 정보 조회 (jwt 정보 활용 예정)
 // :uuid로 받고 role에 따라 분기 처리
-router.get(
+usersRouter.get(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
     // 사용자 일치 여부 확인
@@ -28,7 +28,7 @@ router.get(
 );
 
 // 사용자 정보 수정 (jwt 정보 활용 예정)
-router.patch(
+usersRouter.patch(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
     // 사용자 일치 여부 확인
@@ -60,7 +60,7 @@ router.patch(
 );
 
 // 사용자 삭제 (회원 탈퇴) (jwt 정보 활용 예정)
-router.delete(
+usersRouter.delete(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
     // 사용자 일치 여부 확인
@@ -80,4 +80,4 @@ router.delete(
   })
 );
 
-export default router;
+export { usersRouter };

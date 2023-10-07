@@ -2,14 +2,14 @@ import { Router } from "express";
 import { OrderService, OrderItemService } from "../services";
 import asyncHandler from "../utils/asyncHandler";
 import { validateOrder } from "../validators";
-import jwtLoginRequired from "../middleware/jwt-login-required";
+import jwtLoginRequired from "../middlewares/jwt-login-required";
 
-const router = Router();
+const orderRouter = Router();
 
 //orderItem 미들웨어 구매상품까지 같이 ?
 // 사용자가 구매하기를 누르고 주문내역 보여줄때 res.render
 //주문하기
-router.post(
+orderRouter.post(
   "/",
   asyncHandler(async (req, res, next) => {
     const { error, value } = await validateOrder(req.body);
@@ -34,7 +34,7 @@ router.post(
           order_id: newOrder._id, // 새로 생성된 주문의 _id를 사용
         });
         return newOrderItem;
-      })
+      }),
     );
 
     const newOrderItem = await OrderItemService.addOrderItem(orderedItems);
@@ -52,11 +52,11 @@ router.post(
       data: newOrder,
       items: newOrderItem,
     });
-  })
+  }),
 );
 
 //주문조회 (사용자/관리자) => 권한은 필요가 없음 => 관리자인지 사용자인지 확인 => 토큰이 있는지만 확인하면 => 블랙리스트 미들웨어
-router.get(
+orderRouter.get(
   "/",
   jwtLoginRequired,
   asyncHandler(async (req, res) => {
@@ -80,7 +80,7 @@ router.get(
     } else if (role === "user") {
       const orders = await OrderService.getOrder(
         { uuid: req.user.uuid },
-        Number(page)
+        Number(page),
       );
 
       if (orders.errorMessage)
@@ -95,11 +95,11 @@ router.get(
         data: orders,
       });
     }
-  })
+  }),
 );
 
 //user, admin 따로 경로 만들기
-router.patch(
+orderRouter.patch(
   "/",
   asyncHandler(async (req, res) => {
     const { orderId, data, role } = req.body;
@@ -134,11 +134,11 @@ router.patch(
         data: update,
       });
     }
-  })
+  }),
 );
 
 // user, admin 주문삭제 라우터 따로 만들기
-router.delete(
+orderRouter.delete(
   "/:orderId",
   asyncHandler(async (req, res) => {
     const { orderId } = req.params;
@@ -160,7 +160,7 @@ router.delete(
       status: 200,
       message: order.message,
     });
-  })
+  }),
 );
 
-export default router;
+export { orderRouter };

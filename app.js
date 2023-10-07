@@ -7,13 +7,14 @@ import cors from "cors";
 import dbBoot from "./db";
 import jwtLoginRequired from "./middlewares/jwt-login-required";
 
-// 코드 포맷팅 필요
-import indexRouter from "./routes";
-import usersRouter from "./routes/users";
-import orderRouter from "./routes/order";
-import { categoryRouter } from "./routes/categories";
-import { viewsRouter } from "./routes/views";
-import { itemRouter } from "./routes/items";
+import {
+  accountRouter,
+  categoryRouter,
+  itemRouter,
+  usersRouter,
+  orderRouter,
+  viewsRouter,
+} from "./routes";
 
 const app = express();
 app.use(cors());
@@ -35,7 +36,7 @@ app.locals.blacklist = blacklist;
 app.use("/", viewsRouter);
 
 // API 라우터 등록
-app.use("/", indexRouter);
+app.use("/", accountRouter);
 app.use("/users", setBlacklist, usersRouter);
 app.use("/order", orderRouter);
 app.use("/categories", categoryRouter);
