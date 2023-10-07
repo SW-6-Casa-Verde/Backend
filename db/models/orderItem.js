@@ -1,5 +1,5 @@
 import { model } from "mongoose";
-import OrderItemSchema from "../schemas/orderItem";
+import { OrderItemSchema } from "../schemas/orderItem";
 
 const OrderItemModel = model("OrderItem", OrderItemSchema);
 
