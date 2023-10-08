@@ -60,7 +60,7 @@ categoryRouter.patch(
     if (error) {
       throw {
         status: 400,
-        message: "잘못된 요청입니다. 요청한 값을 다시 확인해 주세요" + error,
+        message: "잘못된 요청입니다. 요청한 값을 다시 확인해 주세요",
       };
     }
 
