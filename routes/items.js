@@ -14,15 +14,15 @@ itemRouter.get(
   asyncHandler(async (req, res) => {
     const { page = 1, perPage = 10, sort } = req.query;
     const category = req.category;
-    let sortQuery = { createdAt: -1 };
+    let sortFilter = { createdAt: -1 };
 
     if (sort === "인기순") {
-      sortQuery = { sales: -1 };
+      sortFilter = { sales: -1 };
     }
 
     // 전체 상품 조회
     if (!category) {
-      const { items, totalPage, errorMessage } = await ItemService.getItems({ page, perPage, sortQuery });
+      const { items, totalPage, errorMessage } = await ItemService.getItems({ page, perPage, sortFilter });
 
       if (errorMessage) {
         throw { status: 404, message: errorMessage };
@@ -33,7 +33,7 @@ itemRouter.get(
 
     // 카테고리별 상품 조회
     if (category) {
-      const { items, totalPage, errorMessage } = await ItemService.getItemsByCategory({ category, page, perPage, sortQuery });
+      const { items, totalPage, errorMessage } = await ItemService.getItemsByCategory({ category, page, perPage, sortFilter });
 
       if (errorMessage) {
         throw { status: 404, message: errorMessage };
@@ -56,12 +56,7 @@ itemRouter.get(
       throw { status: 404, message: "요청한 값을 다시 확인해주세요." };
     }
 
-    let query = { id };
-    if (category) {
-      query.category = category;
-    }
-
-    const item = await ItemService.getItem(query);
+    const item = await ItemService.getItem({ category, id });
 
     if (item.errorMessage) {
       throw { status: 404, message: item.errorMessage };

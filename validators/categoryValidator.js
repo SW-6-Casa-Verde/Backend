@@ -10,12 +10,12 @@ const categoryJoi = Joi.object({
   name: Joi.string(),
 });
 
-async function validateCreateCategory(email) {
-  return categoryCreateJoi.validate(email);
+async function validateCreateCategory(data) {
+  return categoryCreateJoi.validate(data);
 }
 
-async function validateCategory(email) {
-  return categoryJoi.validate(email);
+async function validateCategory(data) {
+  return categoryJoi.validate(data);
 }
 
 export { validateCreateCategory, validateCategory };
