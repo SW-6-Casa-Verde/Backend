@@ -35,18 +35,14 @@
       });
       const data = await res.json();
       //image update
-      const res = await fetch(`http://localhost:3000/users/85a06d83-341e-4d07-872e-f2c0fcc4becf`, {
-        method: "patch",
+      const res = await fetch(`http://kdt-sw-6-team08.elicecoding.com/order`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          email: "helsasddal1@gmail.com",
-          data: {
-            password: "wzxcewsdds@",
-            address: "서울특별시 구구rn ehd 동동",
-            phone: "010-0000-0000",
-            name: "asdaswd",
-          },
+          orderId: "651ed8906a74e490d0703ae7",
+          data: { address: "suwon", request: "경비실말고 편의점!!!!!!" },
+          role: "user",
         }),
       });
       const data = await res.json();
@@ -55,8 +51,7 @@
 
       const res1 = await fetch(`http://kdt-sw-6-team08.elicecoding.com/categories`);
       const data1 = await res1.json();
-      console.log("data1", data1);
-      */
+      console.log("data1", data1);*/
     });
   </script>
 </html>

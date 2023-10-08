@@ -14,7 +14,7 @@ const whitelist = ["http://localhost:3000", "http://kdt-sw-6-team08.elicecoding.
 app.use(
   cors({
     origin: "http://localhost:3000",
-    methods: "GET, POST, PATCH, PUT, DELETE",
+    methods: "GET, POST, PATCH, PUT, DELETE", // 클라이언트 요청 시 대문자 요청
     credentials: true,
   })
 );

@@ -94,6 +94,9 @@ categoryRouter.use(
   async (req, res, next) => {
     const { id } = req.params;
     console.log("category router in ");
+    if (!id) {
+      next({ status: 404, message: "error 확인" });
+    }
 
     const category = await CategoryService.getCategory({ id });
 

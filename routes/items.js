@@ -50,6 +50,10 @@ itemRouter.get(
     const { id } = req.params;
     const category = req.category;
 
+    if (!id) {
+      throw { status: 404, message: "item router error" };
+    }
+
     let query = { id };
     if (category) {
       query.category = category;
