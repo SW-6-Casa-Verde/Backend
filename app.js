@@ -7,17 +7,17 @@ import cors from "cors";
 import dbBoot from "./db";
 import jwtLoginRequired from "./middlewares/jwt-login-required";
 
-import {
-  accountRouter,
-  categoryRouter,
-  itemRouter,
-  usersRouter,
-  orderRouter,
-  viewsRouter,
-} from "./routes";
+import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter } from "./routes";
 
 const app = express();
-app.use(cors());
+const whitelist = ["http://localhost:3000", "http://kdt-sw-6-team08.elicecoding.com"];
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: "GET, POST, PATCH, PUT, DELETE",
+    credentials: true,
+  })
+);
 
 // view engine setup
 // app.set("views", path.join(__dirname, "views"));

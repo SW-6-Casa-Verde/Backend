@@ -33,15 +33,30 @@
         method: "post",
         body: formData,
       });
-      const data = await res.json();*/
+      const data = await res.json();
       //image update
-      const res = await fetch(`/categories/1/items/8vUtDJuBS9bvNU6NqVKgW/images`, {
-        method: "put",
-        body: formData,
+      const res = await fetch(`http://localhost:3000/users/85a06d83-341e-4d07-872e-f2c0fcc4becf`, {
+        method: "patch",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          email: "helsasddal1@gmail.com",
+          data: {
+            password: "wzxcewsdds@",
+            address: "서울특별시 구구rn ehd 동동",
+            phone: "010-0000-0000",
+            name: "asdaswd",
+          },
+        }),
       });
       const data = await res.json();
 
       console.log("응답 데이터 : ", data);
+
+      const res1 = await fetch(`http://kdt-sw-6-team08.elicecoding.com/categories`);
+      const data1 = await res1.json();
+      console.log("data1", data1);
+      */
     });
   </script>
 </html>
