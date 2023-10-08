@@ -1,6 +1,7 @@
-import { User } from "../db";
 import bcrypt from "bcrypt";
+import { User } from "../db";
 import { v4 as uuidv4 } from "uuid";
+import { userRole } from "../constants";
 
 class UserService {
   static async checkEmailDuplicate(email) {
@@ -39,7 +40,7 @@ class UserService {
       address,
       phone,
       name,
-      role: "USER",
+      role: userRole.USER,
     };
     const createNewUser = await User.create(validatedUser);
     // createNewUser error check
