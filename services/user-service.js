@@ -1,6 +1,7 @@
-import { User } from "../db";
 import bcrypt from "bcrypt";
+import { User } from "../db";
 import { v4 as uuidv4 } from "uuid";
+import { userRole } from "../constants";
 
 class UserService {
   static async checkEmailDuplicate(email) {
@@ -39,7 +40,7 @@ class UserService {
       address,
       phone,
       name,
-      role: "USER",
+      role: userRole.USER,
     };
     const createNewUser = await User.create(validatedUser);
     // createNewUser error check
@@ -61,10 +62,11 @@ class UserService {
     return { uuid, email, address, phone, name };
   }
 
-  static async setUserInfo({ uuid, value }) {
+  static async setUserInfo({ currentUser, clientUuid, value }) {
     const errorMessage = "사용자 정보 수정에 실패하였습니다.";
 
-    if ("role" in value && value.role !== "USER") {
+    if (!(currentUser.role === userRole.ADMIN) &&
+        ("role" in value && value.role !== "USER")) {
       return { status: 400, errorMessage };
     }
 
@@ -74,7 +76,7 @@ class UserService {
     }
 
     const updatedUserInfo = await User.updateByUserId({
-      uuid,
+      uuid: clientUuid,
       updateData: value,
     });
     
@@ -85,8 +87,8 @@ class UserService {
     return updatedUserInfo;
   }
 
-  static async deleteUser(uuid) {
-    const delUser = await User.deleteByUserId(uuid);
+  static async deleteUser(userUuid) {
+    const delUser = await User.deleteByUserId(userUuid);
     if (!delUser) {
       const errorMessage = "사용자 삭제에 실패하였습니다.";
       return { status: 400, errorMessage };
