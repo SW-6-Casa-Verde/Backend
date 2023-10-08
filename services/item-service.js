@@ -65,6 +65,18 @@ class ItemService {
       return { errorMessage };
     }
 
+    item.main_images.forEach((imgUrl) =>
+      fs.unlink(imgUrl.replace(process.env.SERVER_URI + "/", ""), (err) => {
+        if (err) console.log("기존 사진 파일 삭제 실패 : ", err);
+      })
+    );
+
+    item.images.forEach((imgUrl) =>
+      fs.unlink(imgUrl.replace(process.env.SERVER_URI + "/", ""), (err) => {
+        if (err) console.log("기존 사진 파일 삭제 실패 : ", err);
+      })
+    );
+
     return await Item.deleteByFilter({ id, category });
   }
 }
