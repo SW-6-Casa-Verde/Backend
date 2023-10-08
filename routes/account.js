@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { UserService, LoginService } from "../services";
+import { UserService, AccountService } from "../services";
 import { validateUser, validateLogin, validateEmail } from "../validators";
 import asyncHandler from "../utils/asyncHandler";
 import jwtLoginRequired from "../middlewares/jwt-login-required";
@@ -35,9 +35,8 @@ accountRouter.post(
     const { error, value } = await validateUser(req.body);
     if (error) throw { status: 422, message: "요청한 값을 다시 확인해주세요." };
 
-    const newUser = await UserService.addUser(value);
-    if (newUser.errorMessage) {
-      const { status, errorMessage } = newUser;
+    const { status, errorMessage } = await UserService.addUser(value);
+    if (errorMessage) {
       throw { status, message: errorMessage };
     }
     res.status(200).json({ status: 200, message: "회원 가입이 완료되었습니다." });
@@ -48,9 +47,8 @@ accountRouter.get(
   "/login",
   asyncHandler(async (req, res, next) => {
     const token = req.cookies.token;
-    const decode = await verifyJWT(token);
-    if (decode.errorMessage) {
-      const { status, errorMessage } = decode;
+    const { status, errorMessage } = await verifyJWT(token);
+    if (errorMessage) {
       throw { status, message: errorMessage };
     }
     // 다음 라우터로 못가나..?
@@ -69,16 +67,16 @@ accountRouter.post(
     const { error, value } = await validateLogin({ email, password });
     if (error) throw { status: 400, message: "요청한 값을 다시 확인해주세요." };
 
-    const isUser = await LoginService.loginUser(value);
-    const success = isUser.authUserInfo;
-    if (!success) {
-      const { status, errorMessage } = isUser;
+    const user = await AccountService.login(value);
+    const { authUserInfo, token } = user;
+    if (!authUserInfo) {
+      const { status, errorMessage } = user;
       throw { status, message: errorMessage };
     }
 
-    const { token, authUserInfo } = isUser;
     // JWT를 쿠키에 설정
     // 쿠키를 주는 것까지는 했으니 세션에 담아두기 위해
+    // 세션 구현 이후 post에서 data 주는거 get으로 옮기기
     res.cookie("token", token, { httpOnly: true });
     res.status(200).json({ status: 200, message: "로그인 성공.", data: authUserInfo });
   })
@@ -92,7 +90,8 @@ accountRouter.post(
     // 즉, 재로그인 한다고 블랙리스트의 토근 정보와 겹칠일이 없다.
     const token = req.cookies.token;
     const localBlackList = req.app.locals.blacklist;
-    localBlackList.push(token);
+
+    await AccountService.logout({ token, localBlackList });
 
     res.clearCookie("token");
     res.status(200).json({ status: 204, message: "로그아웃 성공." });

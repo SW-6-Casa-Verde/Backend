@@ -2,8 +2,8 @@ import bcrypt from "bcrypt";
 import { createJWT } from "../utils/jwt";
 import { User } from "../db";
 
-class LoginService {
-  static async loginUser(user) {
+class AccountService {
+  static async login(user) {
     const { email, password } = user;
     const errorMessage = "로그인에 실패하였습니다.";
 
@@ -17,6 +17,7 @@ class LoginService {
       return { status: 401, errorMessage };
     }
 
+    // 추후 세션 구현하면 민감한 정보는 넣지 않도록 하기
     const { uuid, email: username, password: usrpw, address, phone, name, role } = isEmailMatch;
     const usr = { uuid, email: username, password: usrpw, role };
     const token = createJWT(usr);
@@ -24,6 +25,10 @@ class LoginService {
 
     return { token, authUserInfo };
   }
+
+  static async logout({ token, localBlackList }) {
+    return localBlackList.add(token);
+  }
 }
 
-export { LoginService };
+export { AccountService };

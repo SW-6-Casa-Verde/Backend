@@ -1,17 +1,20 @@
 import jwt from "jsonwebtoken";
-import { JWT_SECRET_KEY } from "../constants";
+import urlSafeBase64 from "./urlSafeBase64";
 
-const secretKey = JWT_SECRET_KEY || "jwt-secret-key";
-const expires = "10m";
+const JWT_SECRET_KEY = urlSafeBase64(process.env.JWT_KEY);
+const option = {
+  expiresIn: "12h",
+  algorithm: "HS256"
+}
 
 // JWT 생성
 function createJWT(payload) {
-  return jwt.sign(payload, secretKey, { expiresIn: expires });
+  return jwt.sign(payload, JWT_SECRET_KEY, option);
 }
 
 // JWT 검증
 async function verifyJWT(token) {
-  return jwt.verify(token, secretKey, (error, decoded) => {
+  return jwt.verify(token, JWT_SECRET_KEY, (error, decoded) => {
     if (error) {
       return { status: 401, errorMessage: "토큰 인증이 만료되었습니다." };
     } else return decoded;
