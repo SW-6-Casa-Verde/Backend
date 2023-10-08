@@ -3,6 +3,7 @@ import { CategoryService } from "../services";
 import { itemRouter } from "./items";
 import asyncHandler from "../utils/asyncHandler";
 import jwtAdminRole from "../middlewares/jwt-admin-role";
+import { validateCategory, validateCreateCategory } from "../validators";
 
 const categoryRouter = Router();
 
@@ -26,18 +27,17 @@ categoryRouter.post(
   jwtAdminRole,
   asyncHandler(async (req, res) => {
     // 관리자 인증 미들웨어 추가
-    const { name } = req.body;
-    const id = Number(req.body.id);
-    console.log(name, id);
+    const { data } = req.body;
+    const { error } = await validateCreateCategory(data);
 
-    if (!id || !name) {
+    if (error) {
       throw {
         status: 400,
         message: "잘못된 요청입니다. 요청한 값을 다시 확인해 주세요",
-      }; // 요청 메시지도 최대한 통일하면 좋을 듯
+      };
     }
 
-    const category = await CategoryService.addCategory({ id, name });
+    const category = await CategoryService.addCategory(data);
 
     if (category.errorMessage) {
       throw { status: 409, message: category.errorMessage };
@@ -48,20 +48,23 @@ categoryRouter.post(
 );
 
 //카테고리 수정
-categoryRouter.put(
+categoryRouter.patch(
   "/:id",
   jwtAdminRole,
   asyncHandler(async (req, res) => {
-    const id = Number(req.params.id);
+    const { id } = req.params;
+    const { data } = req.body;
 
-    if (!req.body.id || !req.body.name) {
+    const { error } = await validateCategory({ id, ...data });
+
+    if (error) {
       throw {
         status: 400,
-        message: "잘못된 요청입니다. 요청한 값을 다시 확인해 주세요",
+        message: "잘못된 요청입니다. 요청한 값을 다시 확인해 주세요" + error,
       };
     }
 
-    const category = await CategoryService.setCategory({ id }, req.body);
+    const category = await CategoryService.setCategory({ id }, data);
 
     if (category.errorMessage) {
       throw { status: 409, message: category.errorMessage };
@@ -77,6 +80,11 @@ categoryRouter.delete(
   jwtAdminRole,
   asyncHandler(async (req, res) => {
     const id = Number(req.params.id);
+    const { error } = await validateCategory({ id });
+
+    if (error) {
+      throw { status: 404, message: "요청한 값을 확인해주세요" };
+    }
 
     const category = await CategoryService.deleteCategory({ id });
 
@@ -91,22 +99,24 @@ categoryRouter.delete(
 // 상품 라우터 연결
 categoryRouter.use(
   "/:id/items",
-  async (req, res, next) => {
-    const { id } = req.params;
-    console.log("category router in ");
-    if (!id) {
-      next({ status: 404, message: "error 확인" });
+  asyncHandler(async (req, res, next) => {
+    const id = req.params.id; //":category_id"
+    const { error } = await validateCategory({ id });
+
+    if (error) {
+      throw { status: 404, message: "요청한 값을 확인해주세요" };
     }
 
     const category = await CategoryService.getCategory({ id });
+    console.log(category);
 
     if (category.errorMessage) {
-      next({ status: 404, message: category.errorMessage });
+      throw { status: 404, message: category.errorMessage };
     }
 
     req.category = category;
     next();
-  },
+  }),
   itemRouter
 );
 

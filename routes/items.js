@@ -3,6 +3,7 @@ import { ItemService } from "../services";
 import asyncHandler from "../utils/asyncHandler";
 import { itemImg } from "../middlewares/upload-itemlmg";
 import jwtAdminRole from "../middlewares/jwt-admin-role";
+import { validateCreateItem, validateItem } from "../validators";
 
 const itemRouter = Router();
 const SERVER_URI = process.env.SERVER_URI;
@@ -50,8 +51,9 @@ itemRouter.get(
     const { id } = req.params;
     const category = req.category;
 
-    if (!id) {
-      throw { status: 404, message: "item router error" };
+    const { error } = await validateItem({ id });
+    if (error) {
+      throw { status: 404, message: "요청한 값을 다시 확인해주세요." };
     }
 
     let query = { id };
@@ -77,16 +79,26 @@ itemRouter.post(
   asyncHandler(async (req, res) => {
     console.log("item router in ", req.files);
     const { name, price, description } = req.body;
+    const { main_images, images } = req.files;
     const category = req.category;
 
-    if (!name || !price || !description || !category || !req.files.main_images) {
+    const { error } = await validateCreateItem({ name, price, description, main_images, images });
+
+    if (error) {
       throw { status: 400, message: "잘못된 요청입니다. 요청한 값을 다시 확인해주세요." };
     }
 
-    const main_images = req.files.main_images.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`);
-    const images = req.files.images?.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`) || [];
+    const main_images_url = req.files.main_images.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`);
+    const images_url = req.files.images?.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`) || [];
 
-    const item = await ItemService.addItem({ name, price, description, main_images, images, category });
+    const item = await ItemService.addItem({
+      name,
+      price,
+      description,
+      main_images: main_images_url,
+      images: images_url,
+      category,
+    });
 
     res.status(201).json({ message: "success", item });
   })
@@ -96,43 +108,32 @@ itemRouter.post(
 itemRouter.put(
   "/:id",
   jwtAdminRole,
+  itemImg.fields([{ name: "main_images", maxCount: 2 }, { name: "images" }]),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { name, price, description } = req.body;
+    const { main_images, images } = req.files;
     const category = req.category;
 
-    if (!name || !price || !description || !category) {
+    const { error } = await validateCreateItem({ name, price, description, main_images, images });
+
+    if (error) {
       throw { status: 400, message: "잘못된 요청입니다. 요청한 값을 다시 확인해주세요." };
     }
 
-    const item = await ItemService.setItem({ id }, { name, price, description, category });
+    const main_images_url = req.files.main_images.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`);
+    const images_url = req.files.images?.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`) || [];
+
+    const item = await ItemService.setItem(
+      { id },
+      { name, price, description, main_images: main_images_url, images: images_url, category }
+    );
 
     if (item.errorMessage) {
       throw { status: 404, message: item.errorMessage };
     }
 
     res.status(201).json({ message: "success", item });
-  })
-);
-
-// 상품 이미지 수정
-itemRouter.put(
-  "/:id/images",
-  jwtAdminRole,
-  itemImg.fields([{ name: "main_images", maxCount: 2 }, { name: "images" }]),
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    console.log("item router in");
-    const main_images = req.files.main_images.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`);
-    const images = req.files.images?.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`) || [];
-
-    if (!main_images) {
-      throw { status: 400, message: "잘못된 요청입니다. 요청한 값을 다시 확인해주세요." };
-    }
-
-    const item = await ItemService.setItem({ id }, { main_images, images });
-
-    res.status(200).json({ message: "success", item });
   })
 );
 
@@ -143,6 +144,11 @@ itemRouter.delete(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const category = req.category;
+
+    const { error } = await validateItem({ id });
+    if (error) {
+      throw { status: 404, message: "요청한 값을 확인해주세요." };
+    }
 
     const item = await ItemService.deleteItem({ id, category });
 
