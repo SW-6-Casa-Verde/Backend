@@ -1,15 +1,16 @@
-import { Order } from "../db";
+import { Order, User } from "../db";
 
 class OrderService {
   // 사용자
-  static async addOrder(data) {
+  static async addOrder(data, uuid) {
     const order = await Order.create(data);
+    const user = await User.findByUserId(uuid);
 
-    if (!order) {
+    if (!order || !user) {
       return { errorMessage: "주문을 생성하는 동안 오류가 발생했습니다." };
     }
 
-    return order;
+    return { order, user };
   }
 
   // role 조건문 빼고 매개변수 수정
@@ -25,15 +26,15 @@ class OrderService {
     return { orders, totalPage };
   }
 
-  static async getNoneMemberOrder(order_id, Identifier) {
+  static async getNoneMemberOrder(order_id, name) {
     const order = await Order.findByOrderId(order_id);
-    console.log(order);
-    if (order.name !== Identifier) {
-      return { errorMessage: "주문 정보와 이름이 일치하지 않습니다." };
-    }
 
     if (!order) {
       return { errorMessage: "주문 내역이 없습니다." };
+    }
+
+    if (order.name !== name) {
+      return { errorMessage: "주문 정보와 이름이 일치하지 않습니다." };
     }
 
     return { order };

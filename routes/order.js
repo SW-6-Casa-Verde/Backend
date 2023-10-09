@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { OrderService, OrderItemService, UserService } from "../services";
 import asyncHandler from "../utils/asyncHandler";
-import { validateOrder, validateAdminOrderUpdate, validateUserOrderUpdate, validateOrderDelete } from "../validators";
+import { validateOrder, validateNonMemberOrder, validateAdminOrderUpdate, validateUserOrderUpdate, validateOrderDelete } from "../validators";
 import jwtAdminRole from "../middlewares/jwt-admin-role";
 import jwtLoginRequired from "../middlewares/jwt-login-required";
+import { sendOrderConfirmationEmail } from "../utils/mailer";
 
 const orderRouter = Router();
 const { setBlacklist } = jwtLoginRequired();
@@ -11,11 +12,12 @@ const { setBlacklist } = jwtLoginRequired();
 //주문하기
 orderRouter.post(
   "/",
+  setBlacklist,
   asyncHandler(async (req, res, next) => {
     const non_member_id = await UserService.getNonMemberId();
-
     const objectIdString = non_member_id.toHexString();
-    console.log(objectIdString);
+    const { uuid } = req.user;
+
     const { error, value } = await validateOrder({
       user_id: objectIdString,
       ...req.body,
@@ -24,7 +26,7 @@ orderRouter.post(
 
     if (error) throw { status: 422, message: "주문정보를 다시 확인해주세요." };
 
-    const newOrder = await OrderService.addOrder(orderData);
+    const newOrder = await OrderService.addOrder(orderData, uuid);
 
     if (newOrder.errorMessage) {
       throw {
@@ -35,12 +37,11 @@ orderRouter.post(
 
     const newOrderItems = await Promise.all(
       orderItems.map(async (orderItem) => {
-        // 주문 아이템 생성
+        // 주문 상품 생성
         const orderedItems = await OrderItemService.addOrderItem({
           ...orderItem,
-          order_id: newOrder._id, // 새로 생성된 주문의 _id를 사용
+          order_id: newOrder.order._id, // 새로 생성된 주문의 _id를 사용
         });
-        console.log(orderedItems);
         return orderedItems;
       })
     );
@@ -51,16 +52,20 @@ orderRouter.post(
         message: newOrderItems.errorMessage,
       };
     }
+    const { _id, name, pay_method, total_price } = newOrder.order;
+    const { email } = newOrder.user;
+
+    sendOrderConfirmationEmail(_id, email, name, pay_method, total_price);
 
     res.status(201).json({
       status: 201,
-      data: newOrder,
+      data: newOrder.order,
       items: newOrderItems,
     });
   })
 );
 
-//주문조회 (사용자/관리자) => 권한은 필요가 없음 => 관리자인지 사용자인지 확인 => 토큰이 있는지만 확인하면 => 블랙리스트 미들웨어
+//주문조회 (사용자/관리자)
 orderRouter.get(
   "/:page",
   setBlacklist,
@@ -105,13 +110,17 @@ orderRouter.get(
   })
 );
 
+// 주문 조회 (비회원)
 orderRouter.get(
   "/",
   asyncHandler(async (req, res) => {
-    const { orderId, Identifier } = req.query;
-    // 예외처리
+    const { id, name } = req.query;
 
-    const orders = await OrderService.getNoneMemberOrder(orderId, Identifier);
+    const { error } = await validateNonMemberOrder({ id, name });
+
+    if (error) throw { status: 422, message: "주문 조회 정보를 다시 확인해주세요." };
+
+    const orders = await OrderService.getNoneMemberOrder(id, name);
 
     if (orders.errorMessage)
       throw {
@@ -127,16 +136,15 @@ orderRouter.get(
   })
 );
 
-//user, admin 따로 경로 만들기
-// 권한을 따로 줘야함 -> admin
+// admin 주문 수정
 orderRouter.patch(
   "/admin/:id",
   jwtAdminRole,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { data } = req.body;
-    //받아오는 상품id 예외처리, 수정내역 예외처리
 
+    //받아오는 상품id 예외처리, 수정내역 예외처리
     const { error } = await validateAdminOrderUpdate({ id, ...data });
 
     if (error) throw { status: 422, message: "주문 수정 정보를 다시 확인해주세요." };
@@ -157,15 +165,14 @@ orderRouter.patch(
   })
 );
 
-//user, admin 따로 경로 만들기
-// 권한을 따로 줘야함 -> user
+// user 주문 수정
 orderRouter.patch(
   "/user/:id",
   setBlacklist,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { data } = req.body;
-    //받아오는 상품id 예외처리, 수정내역 예외처리
+
     const { error } = await validateUserOrderUpdate({ id, ...data });
 
     if (error) throw { status: 422, message: "주문 수정 정보를 다시 확인해주세요." };
@@ -194,8 +201,6 @@ orderRouter.delete(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { error } = await validateOrderDelete({ id });
-    console.log(id);
-    console.log(error);
 
     if (error) throw { status: 422, message: "주문 id를 다시 확인해주세요." };
 
