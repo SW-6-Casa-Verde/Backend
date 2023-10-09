@@ -3,4 +3,12 @@ const userRole = {
   ADMIN: "ADMIN",
 };
 
-export { userRole };
+const strategiesEnum = {
+  LOCAL: "local",
+  JWT: "jwt",
+  GOOGLE: "google",
+  NAVER: "naver",
+  KAKAO: "kakao",
+};
+
+export { userRole, strategiesEnum };
