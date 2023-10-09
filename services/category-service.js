@@ -33,7 +33,7 @@ class CategoryService {
   }
 
   // Update
-  static async setCategory({ id }, query) {
+  static async setCategory({ id }, data) {
     const category = await Category.findById({ id }); // 존재하는지 먼저 찾는 작업
 
     if (!category) {
@@ -41,14 +41,14 @@ class CategoryService {
       return { errorMessage };
     }
 
-    const updateIdCheck = await Category.findById({ id: query.id });
+    const updateIdCheck = await Category.findById({ id: data.id });
 
-    if (updateIdCheck && id !== query.id) {
+    if (updateIdCheck && Number(id) !== data.id) {
       const errorMessage = "해당 아이디가 이미 존재합니다.";
       return { errorMessage };
     }
 
-    return await Category.updateById({ id }, query);
+    return await Category.updateById({ id }, data);
   }
 
   // Delete

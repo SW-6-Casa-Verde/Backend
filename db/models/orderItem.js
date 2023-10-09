@@ -16,10 +16,9 @@ class OrderItem {
     return await OrderItemModel.findOne({ order_id });
   }
 
-  static async deleteById({ order_id }) {
-    return await OrderItemModel.findByIdAndDelete({ order_id });
+  static async deleteManyByOrderId(orderId) {
+    return await OrderItemModel.deleteMany({ order_id: orderId });
   }
-  //order delete 하면 db orderItem도 삭제되나
 }
 
 export { OrderItem };

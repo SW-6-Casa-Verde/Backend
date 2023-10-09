@@ -23,21 +23,21 @@ class Category {
   }
 
   // Update
-  static async updateById({ id }, query) {
-    return await CategoryModel.findOneAndUpdate({ id }, query, { new: true });
+  static async updateById({ id }, data) {
+    return await CategoryModel.findOneAndUpdate({ id }, data, { new: true });
   }
 
-  static async updateByName({ name }, query) {
-    return await CategoryModel.findOneAndUpdate({ name }, query, { new: true });
+  static async updateByName({ name }, data) {
+    return await CategoryModel.findOneAndUpdate({ name }, data, { new: true });
   }
 
   // Delete
-  static async deleteById({ id }, query) {
-    return await CategoryModel.findOneAndDelete({ id }, query, { new: true });
+  static async deleteById({ id }, data) {
+    return await CategoryModel.findOneAndDelete({ id }, data, { new: true });
   }
 
-  static async deleteByIdByName({ name }, query) {
-    await CategoryModel.findOneAndDelete({ name }, query, { new: true });
+  static async deleteByName({ name }, data) {
+    await CategoryModel.findOneAndDelete({ name }, data, { new: true });
   }
 }
 
