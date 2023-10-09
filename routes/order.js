@@ -50,7 +50,7 @@ orderRouter.post(
       };
     }
     // 사용자가 구매하기를 누르고 주문내역 보여줄때 res.render
-    // res.render로 수정
+    // res.render로 수정 render안됨 템플린엔지으로 html해야됨
     res.status(201).json({
       status: 201,
       data: newOrder,
@@ -62,12 +62,15 @@ orderRouter.post(
 //주문조회 (사용자/관리자) => 권한은 필요가 없음 => 관리자인지 사용자인지 확인 => 토큰이 있는지만 확인하면 => 블랙리스트 미들웨어
 orderRouter.get(
   "/:page",
-  jwtLoginRequired,
+  setBlacklist,
   asyncHandler(async (req, res) => {
-    const { page = 1 } = req.params.page;
+    const { page = 1 } = req.params;
     const { role } = req.user;
-    // 받아오는 페이지 예외처리 -> page가 전체 페이지 수를 넘기면 어떻게 하니
-    if (typeof page !== "string") throw { message: "ValidationError" };
+    // 받아오는 페이지 예외처리 -> page가 전체 페이지 수를 넘기면 어떻게 하니 -> 페이지 처리 및 예외 처리: 페이지가 전체 페이지 수를 넘어갈 때의 예외 처리
+    console.log(page);
+    if (isNaN(page) || parseInt(page) <= 0) {
+      throw { status: 400, message: "Invalid page parameter" };
+    }
 
     if (role === "admin") {
       const orders = await OrderService.getOrder({}, Number(page));

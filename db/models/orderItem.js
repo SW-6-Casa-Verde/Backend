@@ -17,7 +17,6 @@ class OrderItem {
   }
 
   static async deleteManyByOrderId(orderId) {
-    console.log("여기냐ㅐ!!");
     return await OrderItemModel.deleteMany({ order_id: orderId });
   }
 }

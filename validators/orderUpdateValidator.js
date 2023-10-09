@@ -1,12 +1,5 @@
 import Joi from "joi";
-
-// Joi 스키마 정의
-const orderStatusEnum = [
-  "ORDER_CONFIRMED",
-  "PREPARING_FOR_SHIPMENT",
-  "SHIPPED",
-  "DELIVERED",
-];
+import { orderStatusEnum } from "../constants";
 
 // Joi 스키마 정의
 const adminOrderUpdateJoiSchema = Joi.object({

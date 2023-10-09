@@ -2,7 +2,6 @@ import { OrderItem } from "../db";
 
 class OrderItemService {
   static async addOrderItem(data) {
-    console.log("여기냐ㅐ!!");
     const order = await OrderItem.create(data);
 
     if (!order) {

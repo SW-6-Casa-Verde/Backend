@@ -1,12 +1,5 @@
 import Joi from "joi";
-
-const orderStatusEnum = [
-  "ORDER_CONFIRMED",
-  "PREPARING_FOR_SHIPMENT",
-  "SHIPPED",
-  "DELIVERED",
-];
-const payMethodEnum = ["CARD", "BANK_TRANSFER"];
+import { orderStatusEnum, payMethodEnum } from "../constants";
 
 // Joi 스키마 정의
 const orderJoiSchema = Joi.object({

@@ -1,13 +1,6 @@
 import { Schema } from "mongoose";
 import orderId from "./types/short-id";
-
-const orderStatusEnum = [
-  "ORDER_CONFIRMED",
-  "PREPARING_FOR_SHIPMENT",
-  "SHIPPED",
-  "DELIVERED",
-];
-const payMethodEnum = ["CARD", "BANK_TRANSFER"];
+import { orderStatusEnum, payMethodEnum } from "../../constants";
 
 const OrderSchema = new Schema(
   {
