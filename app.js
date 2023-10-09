@@ -8,14 +8,8 @@ import dbBoot from "./db";
 import jwtLoginRequired from "./middlewares/jwt-login-required";
 import { passport, session, sessionConfig } from "./passport";
 
-import { 
-  accountRouter, 
-  categoryRouter, 
-  itemRouter, 
-  usersRouter, 
-  orderRouter, 
-  viewsRouter 
-} from "./routes";
+import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter } from "./routes";
+import { authRouter } from "./routes/auth";
 
 const app = express();
 const whitelist = ["http://localhost:3000", "http://kdt-sw-6-team08.elicecoding.com"];
@@ -55,6 +49,7 @@ app.use("/users", setBlacklist, usersRouter);
 app.use("/order", orderRouter);
 app.use("/categories", categoryRouter);
 app.use("/items", itemRouter);
+app.use("/auth", authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

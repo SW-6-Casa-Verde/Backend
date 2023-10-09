@@ -4,16 +4,18 @@ import sessionConfig from "./sessionConfig";
 
 import local from "./strategies/local";
 import jwt from "./strategies/jwt";
+import google from "./strategies/google";
 
 passport.serializeUser((user, done) => {
-    done(null, user);
+  done(null, user);
 });
 
 passport.deserializeUser((user, done) => {
-    done(null, user);
+  done(null, user);
 });
 
 passport.use(local);
 passport.use(jwt);
+passport.use(google);
 
 export { passport, session, sessionConfig };
