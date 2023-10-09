@@ -4,7 +4,6 @@ import asyncHandler from "../utils/asyncHandler";
 import { verifyJWT } from "../utils/jwt";
 import checkAuth from "../utils/checkAuth";
 import { validateUserUpdate } from "../validators";
-import fetch from "node-fetch/src";
 
 const usersRouter = Router();
 

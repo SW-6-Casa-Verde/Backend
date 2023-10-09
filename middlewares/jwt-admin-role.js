@@ -5,13 +5,13 @@ export default async function jwtAdminRole(req, res, next) {
   const token = req.cookies.token;
   const { status, errorMessage, role } = await verifyJWT(token);
 
-  if(!errorMessage && role === userRole.ADMIN) {
-    next()
+  if (!errorMessage && role === userRole.ADMIN) {
+    return next();
   }
 
   let error = errorMessage 
     ? { status, message: errorMessage } 
-    : { status: 403, message: "Forbidden" }
+    : { status: 403, message: "Forbidden" };
 
-  next (error);
+  next(error);
 }
