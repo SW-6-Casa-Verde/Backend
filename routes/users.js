@@ -55,6 +55,7 @@ usersRouter.patch(
       const { status, errorMessage } = updateUser;
       throw { status, message: errorMessage };
     }
+    
     res.status(200).json({ status: 204, message: "사용자 정보 수정 성공." });
   })
 );

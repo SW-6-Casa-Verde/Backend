@@ -95,6 +95,15 @@ class UserService {
     }
     return delUser;
   }
+
+  static async getNonMemberId() {
+    const nonMember = await User.findByUserId("guest_id");
+    if (!nonMember) {
+      const errorMessage = "비회원 유저가 없습니다.";
+      return { status: 404, errorMessage };
+    }
+    return nonMember._id;
+  }
 }
 
 export { UserService };
