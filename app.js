@@ -6,6 +6,7 @@ import logger from "morgan";
 import cors from "cors";
 import dbBoot from "./db";
 import jwtLoginRequired from "./middlewares/jwt-login-required";
+import { passport, session, sessionConfig } from "./passport";
 
 import {
   accountRouter,
@@ -28,6 +29,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
+
+// 세션 등록
+app.use(session(sessionConfig));
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 const { blacklist, setBlacklist } = jwtLoginRequired();
 app.locals.blacklist = blacklist;
