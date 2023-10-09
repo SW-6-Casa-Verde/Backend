@@ -4,7 +4,6 @@ import asyncHandler from "../utils/asyncHandler";
 import { verifyJWT } from "../utils/jwt";
 import checkAuth from "../utils/checkAuth";
 import { validateUserUpdate } from "../validators";
-import fetch from "node-fetch/src";
 
 const usersRouter = Router();
 
@@ -56,6 +55,7 @@ usersRouter.patch(
       const { status, errorMessage } = updateUser;
       throw { status, message: errorMessage };
     }
+    
     res.status(200).json({ status: 204, message: "사용자 정보 수정 성공." });
   })
 );

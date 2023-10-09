@@ -8,7 +8,7 @@ class AccountService {
     const errorMessage = "로그인에 실패하였습니다.";
 
     const isEmailMatch = await User.findByEmail(email);
-    if (!isEmailMatch) {
+    if (!isEmailMatch || isEmailMatch?.uuid === "guest_id") {
       return { status: 401, errorMessage };
     }
 
