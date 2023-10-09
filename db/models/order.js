@@ -1,5 +1,5 @@
 import { model } from "mongoose";
-import OrderSchema from "../schemas/order";
+import { OrderSchema } from "../schemas/order";
 
 const OrderModel = model("Order", OrderSchema);
 
@@ -12,24 +12,25 @@ class Order {
     return await OrderModel.create(newOrder);
   }
 
-  static async findByOrderId({ order_id }) {
-    return await OrderModel.findOne({ order_id });
+  static async findByOrderId(order_id) {
+    return await OrderModel.findOne({ _id: order_id });
   }
 
   static async findByUserId(userId) {
     return await OrderModel.findOne({ user_id: userId });
   }
 
-  static async getPaginatedOrders(query, page, perPage) {
+  static async getPaginatedOrders(data, page, perPage) {
     const [total, orders] = await Promise.all([
-      OrderModel.countDocuments(query),
-      OrderModel.find(query)
+      OrderModel.countDocuments(data),
+      OrderModel.find(data)
         .sort({ createdAt: -1 })
         .skip(perPage * (page - 1))
         .limit(perPage)
         .populate("user_id"), // populate 추가하기
     ]);
 
+    //console.log(total, orders);
     const totalPage = Math.ceil(total / perPage);
 
     return [orders, totalPage];

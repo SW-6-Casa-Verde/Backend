@@ -1,7 +1,5 @@
 import Joi from "joi";
-
-const orderStatus = ["ORDER_CONFIRMED", "PREPARING_FOR_SHIPMENT", "SHIPPED", "DELIVERED"];
-const payMethod = ["CARD", "BANK_TRANSFER"];
+import { orderStatusEnum, payMethodEnum } from "../constants";
 
 // Joi 스키마 정의
 const orderJoiSchema = Joi.object({
@@ -21,17 +19,17 @@ const orderJoiSchema = Joi.object({
   phone: Joi.string().required(),
   request: Joi.string(),
   pay_method: Joi.string()
-    .valid(...payMethod)
+    .valid(...payMethodEnum)
     .required(),
   order_status: Joi.string()
-    .valid(...orderStatus)
+    .valid(...orderStatusEnum)
     .required(),
   user_id: Joi.string().hex().length(24).required(),
 });
 // hex문자열에 16진수 문자만 포함되어 있는지 확인하고 정확히 length24자로 구성된 문자열인지 확인
 
-async function validateOrder(user) {
-  return orderJoiSchema.validate(user);
+async function validateOrder(data) {
+  return orderJoiSchema.validate(data);
 }
 
 export { validateOrder };
