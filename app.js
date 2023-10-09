@@ -8,7 +8,14 @@ import dbBoot from "./db";
 import jwtLoginRequired from "./middlewares/jwt-login-required";
 import { passport, session, sessionConfig } from "./passport";
 
-import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter } from "./routes";
+import { 
+  accountRouter, 
+  categoryRouter, 
+  itemRouter, 
+  usersRouter, 
+  orderRouter, 
+  viewsRouter 
+} from "./routes";
 
 const app = express();
 const whitelist = ["http://localhost:3000", "http://kdt-sw-6-team08.elicecoding.com"];
@@ -65,31 +72,5 @@ app.use(function (err, req, res, next) {
   res.status(status || 500);
   res.json({ status, message });
 });
-
-const mongoose = require("mongoose");
-import { model } from "mongoose";
-import { OrderSchema } from "./db/schemas/order";
-//import { OrderModel } from "./db/models/order";
-const OrderModel = model("Order", OrderSchema);
-
-const user_id = new mongoose.Types.ObjectId();
-console.log(user_id, "dfsdf101010`10");
-
-async function exam({ data, page, perPage }) {
-  const [total, orders] = await Promise.all([
-    OrderModel.countDocuments(data),
-    OrderModel.find(data)
-      .sort({ createdAt: -1 })
-      .skip(perPage * (page - 1))
-      .limit(perPage)
-      .populate("user_id"), // populate 추가하기
-  ]);
-
-  //console.log(total, orders);
-  const totalPage = Math.ceil(total / perPage);
-
-  return [orders, totalPage];
-}
-console.log(exam({}, 1, 10));
 
 module.exports = app;
