@@ -1,12 +1,7 @@
 import { Router } from "express";
-import { OrderService, OrderItemService } from "../services";
+import { OrderService, OrderItemService, UserService } from "../services";
 import asyncHandler from "../utils/asyncHandler";
-import {
-  validateOrder,
-  validateAdminOrderUpdate,
-  validateUserOrderUpdate,
-  validateOrderDelete,
-} from "../validators";
+import { validateOrder, validateAdminOrderUpdate, validateUserOrderUpdate, validateOrderDelete } from "../validators";
 import jwtAdminRole from "../middlewares/jwt-admin-role";
 import jwtLoginRequired from "../middlewares/jwt-login-required";
 
@@ -17,7 +12,14 @@ const { setBlacklist } = jwtLoginRequired();
 orderRouter.post(
   "/",
   asyncHandler(async (req, res, next) => {
-    const { error, value } = await validateOrder(req.body);
+    const non_member_id = await UserService.getNonMemberId();
+
+    const objectIdString = non_member_id.toHexString();
+    console.log(objectIdString);
+    const { error, value } = await validateOrder({
+      user_id: objectIdString,
+      ...req.body,
+    });
     const { orderItems, ...orderData } = value;
 
     if (error) throw { status: 422, message: "주문정보를 다시 확인해주세요." };
@@ -49,8 +51,7 @@ orderRouter.post(
         message: newOrderItems.errorMessage,
       };
     }
-    // 사용자가 구매하기를 누르고 주문내역 보여줄때 res.render
-    // res.render로 수정 render안됨 템플린엔지으로 html해야됨
+
     res.status(201).json({
       status: 201,
       data: newOrder,
@@ -66,13 +67,12 @@ orderRouter.get(
   asyncHandler(async (req, res) => {
     const { page = 1 } = req.params;
     const { role } = req.user;
-    // 받아오는 페이지 예외처리 -> page가 전체 페이지 수를 넘기면 어떻게 하니 -> 페이지 처리 및 예외 처리: 페이지가 전체 페이지 수를 넘어갈 때의 예외 처리
-    console.log(page);
+
     if (isNaN(page) || parseInt(page) <= 0) {
       throw { status: 400, message: "Invalid page parameter" };
     }
 
-    if (role === "admin") {
+    if (role === "ADMIN") {
       const orders = await OrderService.getOrder({}, Number(page));
 
       if (orders.errorMessage)
@@ -87,11 +87,8 @@ orderRouter.get(
         totalPage: orders.totalPage,
         data: orders.orders,
       });
-    } else if (role === "user") {
-      const orders = await OrderService.getOrder(
-        { user_id: req.user.uuid },
-        Number(page)
-      );
+    } else if (role === "USER") {
+      const orders = await OrderService.getOrder({ user_id: req.user.uuid }, Number(page));
 
       if (orders.errorMessage)
         throw {
@@ -108,6 +105,28 @@ orderRouter.get(
   })
 );
 
+orderRouter.get(
+  "/",
+  asyncHandler(async (req, res) => {
+    const { orderId, Identifier } = req.query;
+    // 예외처리
+
+    const orders = await OrderService.getNoneMemberOrder(orderId, Identifier);
+
+    if (orders.errorMessage)
+      throw {
+        status: 422,
+        message: orders.errorMessage,
+      };
+
+    return res.status(200).json({
+      status: 200,
+      message: "비회원 주문 목록입니다.",
+      data: orders,
+    });
+  })
+);
+
 //user, admin 따로 경로 만들기
 // 권한을 따로 줘야함 -> admin
 orderRouter.patch(
@@ -120,8 +139,7 @@ orderRouter.patch(
 
     const { error } = await validateAdminOrderUpdate({ id, ...data });
 
-    if (error)
-      throw { status: 422, message: "주문 수정 정보를 다시 확인해주세요." };
+    if (error) throw { status: 422, message: "주문 수정 정보를 다시 확인해주세요." };
 
     const update = await OrderService.setOrder(id, data, "admin");
 
@@ -150,8 +168,7 @@ orderRouter.patch(
     //받아오는 상품id 예외처리, 수정내역 예외처리
     const { error } = await validateUserOrderUpdate({ id, ...data });
 
-    if (error)
-      throw { status: 422, message: "주문 수정 정보를 다시 확인해주세요." };
+    if (error) throw { status: 422, message: "주문 수정 정보를 다시 확인해주세요." };
 
     const update = await OrderService.setOrder(id, data, "user");
 

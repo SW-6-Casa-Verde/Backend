@@ -1,7 +1,9 @@
 import { model } from "mongoose";
 import { OrderSchema } from "../schemas/order";
+import UserSchema from "../schemas/user";
 
 const OrderModel = model("Order", OrderSchema);
+const UserModel = model("User", UserSchema);
 
 class Order {
   static async findAll() {
@@ -21,19 +23,21 @@ class Order {
   }
 
   static async getPaginatedOrders(data, page, perPage) {
+    const userId = await UserModel.findOne({ uuid: data.user_id });
+    data.user_id = userId._id;
+
     const [total, orders] = await Promise.all([
       OrderModel.countDocuments(data),
       OrderModel.find(data)
         .sort({ createdAt: -1 })
         .skip(perPage * (page - 1))
         .limit(perPage)
-        .populate("user_id"), // populate 추가하기
+        .populate("user_id"),
     ]);
 
-    //console.log(total, orders);
     const totalPage = Math.ceil(total / perPage);
 
-    return [orders, totalPage];
+    return { orders, totalPage };
   }
 
   //Update를 실행한 뒤의 업데이트된 데이터를 콘솔로 확인하고 싶다면 new 옵션
