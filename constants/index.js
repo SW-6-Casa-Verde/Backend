@@ -3,6 +3,15 @@ const userRole = {
   ADMIN: "ADMIN",
 };
 
+const orderStatusEnum = [
+  "ORDER_CONFIRMED",
+  "PREPARING_FOR_SHIPMENT",
+  "SHIPPED",
+  "DELIVERED",
+];
+
+const payMethodEnum = ["CARD", "BANK_TRANSFER"];
+
 const strategiesEnum = {
   LOCAL: "local",
   JWT: "jwt",
@@ -11,4 +20,4 @@ const strategiesEnum = {
   KAKAO: "kakao",
 };
 
-export { userRole, strategiesEnum };
+export { userRole, orderStatusEnum, payMethodEnum, strategiesEnum };

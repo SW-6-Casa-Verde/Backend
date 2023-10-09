@@ -3,7 +3,7 @@ import urlSafeBase64 from "./urlSafeBase64";
 
 const JWT_SECRET_KEY = urlSafeBase64(process.env.JWT_KEY);
 const option = {
-  expiresIn: "10m",
+  expiresIn: "12h",
   algorithm: "HS256"
 }
 
