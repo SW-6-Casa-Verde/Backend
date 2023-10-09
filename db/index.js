@@ -17,7 +17,7 @@ async function boot() {
   // 관리자 유저 기본 데이터
   const adminCheck = await User.findByUserId("admin_id");
   // 관리자 데이터가 없으면 넣음.
-  const adminPassword = await bcrypt.hash("adminadmin@", 10);
+  const adminPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
   if (!adminCheck) {
     await User.create({
       uuid: "admin_id",

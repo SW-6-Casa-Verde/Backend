@@ -3,17 +3,15 @@ import { userRole } from "../constants";
 
 export default async function jwtAdminRole(req, res, next) {
   const token = req.cookies.token;
-  const decode = await verifyJWT(token);
-  // 토큰 만료 체크
-  if (decode.errorMessage) {
-    const { status, errorMessage } = decode;
-    next({ status, message: errorMessage });
+  const { status, errorMessage, role } = await verifyJWT(token);
+
+  if (!errorMessage && role === userRole.ADMIN) {
+    return next();
   }
 
-  if (decode.role !== userRole.ADMIN) {
-    next({ status: 403, message: "Forbidden" });
-  }
-  console.log("admin 인증 완료");
+  let error = errorMessage 
+    ? { status, message: errorMessage } 
+    : { status: 403, message: "Forbidden" };
 
-  next();
+  next(error);
 }

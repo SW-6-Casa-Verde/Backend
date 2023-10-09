@@ -5,3 +5,5 @@ export * from "./userUpdateValidator";
 export * from "./userValidator";
 export * from "./orderUpdateValidator";
 export * from "./orderDeleteValidator";
+export * from "./categoryValidator";
+export * from "./itemValidator";
