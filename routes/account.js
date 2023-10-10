@@ -1,9 +1,10 @@
 import { Router } from "express";
+import passport from "passport";
 import { UserService, AccountService } from "../services";
-import { validateUser, validateLogin, validateEmail } from "../validators";
+import { validateUser, validateEmail } from "../validators";
 import asyncHandler from "../utils/asyncHandler";
 import jwtLoginRequired from "../middlewares/jwt-login-required";
-import { verifyJWT } from "../utils/jwt";
+import { createJWT, verifyJWT } from "../utils/jwt";
 
 const accountRouter = Router();
 const { setBlacklist } = jwtLoginRequired();
@@ -23,6 +24,7 @@ accountRouter.post(
       const message = isEmailDuplicate.errorMessage;
       throw { status: 409, message: message };
     }
+
     res.status(200).json({ status: 200, message: "사용 가능한 이메일 주소입니다." });
   })
 );
@@ -36,9 +38,7 @@ accountRouter.post(
     if (error) throw { status: 422, message: "요청한 값을 다시 확인해주세요." };
 
     const { status, errorMessage } = await UserService.addUser(value);
-    if (errorMessage) {
-      throw { status, message: errorMessage };
-    }
+    if (errorMessage) throw { status, message: errorMessage };
 
     res.status(200).json({ status: 200, message: "회원 가입이 완료되었습니다." });
   })
@@ -48,14 +48,22 @@ accountRouter.get(
   "/login",
   asyncHandler(async (req, res, next) => {
     const token = req.cookies.token;
-    const decodedToken = await verifyJWT(token);
-    if (decodedToken.errorMessage) {
-      const { status, errorMessage } = decodedToken;
-      throw { status, message: errorMessage };
+    // 토큰이 없어도 에러는 아님. 
+    let tokenUuid = null;
+    if (token) {
+      const decodedToken = await verifyJWT(token);
+      if (!decodedToken.errorMessage) tokenUuid = decodedToken.uuid;
     }
-    // 다음 라우터로 못가나..?
-    // 로그인 유지는 세션있어야 가능할듯..
-    const authUserInfo = await UserService.getUserInfo(decodedToken.uuid);
+
+    // 토큰 값 없으면 미들웨어 종료
+    if (!tokenUuid) {
+      return res.status(200).json({ 
+        status: 200, 
+        message: "OK",
+      });
+    }
+
+    const authUserInfo = await UserService.getUserInfo(tokenUuid);
     if (authUserInfo.errorMessage) {
       const { status, errorMessage } = authUserInfo;
       throw { status, message: errorMessage };
@@ -65,31 +73,18 @@ accountRouter.get(
       .json({ 
         status: 200, 
         message: "로그인 되어 있는 사용자입니다.", 
-        data: authUserInfo 
+        data: { uuid: authUserInfo.uuid }
       });
   })
 );
 
 accountRouter.post(
   "/login",
+  passport.authenticate('local', { session: false }),
   asyncHandler(async (req, res, next) => {
-    // 데이터 유효성 검사
-    const { email, password } = req.body;
-    // 토큰이 있다면 토큰으로 로그인 진행
-
-    const { error, value } = await validateLogin({ email, password });
-    if (error) throw { status: 400, message: "요청한 값을 다시 확인해주세요." };
-
-    const user = await AccountService.login(value);
-    const { token } = user;
-    if (!token) {
-      const { status, errorMessage } = user;
-      throw { status, message: errorMessage };
-    }
-
-    // JWT를 쿠키에 설정
-    // 쿠키를 주는 것까지는 했으니 세션에 담아두기 위해
-    // 세션 구현 이후 post에서 data 주는거 get으로 옮기기
+    const { role, uuid } = req.user // localStratery 끝나고 받아온 데이터는 뭐로 받음?
+    const token = await createJWT({ role, uuid });
+    
     res.cookie("token", token, { httpOnly: true });
     res.status(200).json({ status: 200, message: "로그인 성공." });
   })
@@ -100,7 +95,8 @@ accountRouter.post(
   setBlacklist,
   asyncHandler(async (req, res, next) => {
     // JWT는 일반적으로 시간 기반과 무작위한 요소를 포함하여 생성된다.
-    // 즉, 재로그인 한다고 블랙리스트의 토근 정보와 겹칠일이 없다.
+    // 서버에서 jwt 토큰을 제거는 할 수 있을지언정 만료되지 않은 토큰이면 탈취당하면 악용 가능
+    // 예방 차원에서 블랙리스트 운용
     const token = req.cookies.token;
     const localBlackList = req.app.locals.blacklist;
 
