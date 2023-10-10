@@ -21,8 +21,10 @@ async function findOrCreateUser({ name, email }) {
     password: "GOOGLE_OAUTH",
     address: ".z",
     phone: ".",
+    role: "USER",
   });
   //user service의 addUser를 사용하는 게 더 좋을 것 같은데 그러면 address phone은 required 풀어야 될 듯
+  //회원 탈퇴하려면 db에 access token 저장해둬야 함... 스키마 필요
 
   return created;
 }
