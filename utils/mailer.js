@@ -19,7 +19,7 @@ async function sendOrderConfirmationEmail(orderId, buyerEmail, name, pay_method,
 				<div style="font-size :16px">
 					<div>구매자명 : ${name}</div>
 					<div>주문번호 : ${orderId}</div>
-					<div>결제금액 : ${price}</div>
+					<div>결제금액 : ${price}원</div>
 					<div>결제수단 : ${pay_method}</div>
 				<div>
         </body>
