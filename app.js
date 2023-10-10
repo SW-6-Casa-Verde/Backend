@@ -6,7 +6,8 @@ import logger from "morgan";
 import cors from "cors";
 import dbBoot from "./db";
 import jwtLoginRequired from "./middlewares/jwt-login-required";
-import { passport, session, sessionConfig } from "./passport";
+import corsOptionsProvider from "./middlewares/corsOptionsProvider";
+import { passport } from "./passport";
 
 import { 
   accountRouter, 
@@ -18,14 +19,9 @@ import {
 } from "./routes";
 
 const app = express();
-const whitelist = ["http://localhost:3000", "http://kdt-sw-6-team08.elicecoding.com"];
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    methods: "GET, POST, PATCH, PUT, DELETE", // 클라이언트 요청 시 대문자 요청
-    credentials: true,
-  })
-);
+
+// 기능 개발 끝나고 적용 테스트
+app.use(cors(corsOptionsProvider));
 
 // view engine setup
 // app.set("views", path.join(__dirname, "views"));
@@ -38,10 +34,10 @@ app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
 // 세션 등록
-app.use(session(sessionConfig));
+// app.use(session(sessionConfig));
 
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 const { blacklist, setBlacklist } = jwtLoginRequired();
 app.locals.blacklist = blacklist;
