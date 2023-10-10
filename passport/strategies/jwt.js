@@ -7,17 +7,15 @@ const cookieExtractor = (req) => {
 };
 
 const jwtOptions = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+    jwtFromRequest: cookieExtractor,
     secretOrKey: urlSafeBase64(process.env.JWT_KEY)
 };
 
 const jwt = new JwtStrategy(jwtOptions, (payload, done) => {
     try {
         // verify 로직
-        const sessionId = payload.sessionId;
-        // 미들웨어로 등록됐는데 세션은...
-        const sessionUser = sessionStore.get(sessionId);
-        if (sessionUser) return done(null, sessionUser);
+        console.log(payload)
+        done(null, payload)
     } catch (error) {
         done(error, null);
     }
