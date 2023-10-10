@@ -3,6 +3,31 @@ import { createJWT } from "../utils/jwt";
 import { User } from "../db";
 
 class AccountService {
+  static async localLogin(user) {
+    const { email, password } = user;
+    const errorJson = { status: 401, message: "로그인에 실패하였습니다." };
+
+    const isEmailMatch = await User.findByEmail(email);
+    if (!isEmailMatch) return errorJson;
+
+    const isPasswordMatch = bcrypt.compareSync(password, isEmailMatch.password);
+    if (!isPasswordMatch) return errorJson;
+
+    const { uuid, email: userEmail, role, name } = isEmailMatch;
+    const userInfo = {
+      uuid, 
+      email: userEmail,
+      role, 
+      name,
+    };
+
+    return userInfo;
+  }
+
+  static async socialNaverLogin() {
+    
+  }
+
   static async login(user) {
     const { email, password } = user;
     const errorMessage = "로그인에 실패하였습니다.";
@@ -24,7 +49,7 @@ class AccountService {
   }
 
   static async logout({ token, localBlackList }) {
-    return localBlackList.add(token);
+    if (token) return localBlackList.add(token);
   }
 }
 
