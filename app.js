@@ -8,7 +8,7 @@ import dbBoot from "./db";
 import jwtLoginRequired from "./middlewares/jwt-login-required";
 import { passport, session, sessionConfig } from "./passport";
 
-import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter, kakaoAuthRouter } from "./routes";
+import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter, authRouter } from "./routes";
 
 const app = express();
 app.use(cors());
@@ -41,7 +41,7 @@ app.use("/users", setBlacklist, usersRouter);
 app.use("/order", orderRouter);
 app.use("/categories", categoryRouter);
 app.use("/items", itemRouter);
-app.use("/auth", kakaoAuthRouter);
+app.use("/auth", authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

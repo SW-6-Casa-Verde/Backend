@@ -1,40 +1,39 @@
+import passport from "passport";
 import { Strategy as KakaoStrategy } from "passport-kakao";
-import { User } from "../../db";
+import { UserModel } from "../../db";
+import { v4 as uuidv4 } from "uuid";
+import { userRole } from "../../constants";
 
 const config = {
   clientID: process.env.kakao_clientID,
-  clientSecret: process.env.kakao_clientPassword,
   callbackURL: "/auth/kakao/callback",
 };
 
 async function findOrCreateUser({ name, email }) {
-  const user = await User.findOne(email);
+  const user = await UserModel.findOne({ email: email });
 
-  if (user) {
-    return user;
-  }
+  if (user) user;
 
-  const created = await User.create({
+  return await UserModel.create({
+    uuid: uuidv4(),
     name,
     email,
     password: "KAKAO_OAUTH",
     address: "추가 기입 사항",
     phone: "010-0000-0000",
+    role: userRole.USER,
   });
-
-  return created;
 }
 
 const kakao = new KakaoStrategy(config, async (accessToken, refreshToken, profile, done) => {
-  const { email, name } = profile._json;
-  console.log(profile._json);
+  const name = profile.displayName;
+  const email = profile._json.kakao_account.email;
 
   try {
-    const user = await findOrCreateUser({ email, name });
+    const user = await findOrCreateUser({ name, email });
     done(null, {
-      shortId: user.shortId,
-      email: user.email,
-      name: user.name,
+      uuid: user.uuid,
+      role: user.role,
     });
   } catch (e) {
     done(e, null);
