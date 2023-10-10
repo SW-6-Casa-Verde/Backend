@@ -32,10 +32,10 @@ app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
 // 세션 등록
-app.use(session(sessionConfig));
+// app.use(session(sessionConfig));
 
 app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.session());
 
 const { blacklist, setBlacklist } = jwtLoginRequired();
 app.locals.blacklist = blacklist;

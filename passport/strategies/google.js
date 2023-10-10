@@ -19,7 +19,7 @@ async function findOrCreateUser({ name, email }) {
     name,
     email,
     password: "GOOGLE_OAUTH",
-    address: ".",
+    address: ".z",
     phone: ".",
   });
   //user service의 addUser를 사용하는 게 더 좋을 것 같은데 그러면 address phone은 required 풀어야 될 듯
@@ -34,7 +34,6 @@ export default new GoogleStrategy(config, async (accessToken, refreshToken, prof
   try {
     const user = await findOrCreateUser({ email, name });
     done(null, {
-      uuid: user.uuid,
       email: user.email,
       name: user.name,
       role: user.role,
