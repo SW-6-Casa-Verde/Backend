@@ -12,7 +12,7 @@ const corsOptionsProvider = (req, callback) => {
   const corsOptions = {
     origin: origin,
     methods: 'GET, POST, PATCH, PUT, DELETE', // 허용할 HTTP 메서드 목록
-    credentials: 'include', 
+    credentials: true, 
   };
 
   callback(null, corsOptions);
