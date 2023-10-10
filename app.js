@@ -15,7 +15,7 @@ app.use(
   cors({
     origin: "http://localhost:3000",
     methods: "GET, POST, PATCH, PUT, DELETE", // 클라이언트 요청 시 대문자 요청
-    credentials: true,
+    credentials: "include",
   })
 );
 
