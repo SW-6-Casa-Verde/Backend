@@ -6,8 +6,9 @@ import logger from "morgan";
 import cors from "cors";
 import dbBoot from "./db";
 import jwtLoginRequired from "./middlewares/jwt-login-required";
+import { passport, session, sessionConfig } from "./passport";
 
-import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter } from "./routes";
+import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter, kakaoAuthRouter } from "./routes";
 
 const app = express();
 app.use(cors());
@@ -22,6 +23,12 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
+// 세션 등록
+app.use(session(sessionConfig));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 const { blacklist, setBlacklist } = jwtLoginRequired();
 app.locals.blacklist = blacklist;
 
@@ -34,6 +41,7 @@ app.use("/users", setBlacklist, usersRouter);
 app.use("/order", orderRouter);
 app.use("/categories", categoryRouter);
 app.use("/items", itemRouter);
+app.use("/auth", kakaoAuthRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

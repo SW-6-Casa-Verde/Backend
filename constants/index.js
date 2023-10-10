@@ -12,4 +12,12 @@ const orderStatusEnum = [
 
 const payMethodEnum = ["CARD", "BANK_TRANSFER"];
 
-export { userRole, orderStatusEnum, payMethodEnum };
+const strategiesEnum = {
+  LOCAL: "local",
+  JWT: "jwt",
+  GOOGLE: "google",
+  NAVER: "naver",
+  KAKAO: "kakao",
+};
+
+export { userRole, orderStatusEnum, payMethodEnum, strategiesEnum };

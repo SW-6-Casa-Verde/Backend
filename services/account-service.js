@@ -17,13 +17,10 @@ class AccountService {
       return { status: 401, errorMessage };
     }
 
-    // 추후 세션 구현하면 민감한 정보는 넣지 않도록 하기
-    const { uuid, email: username, password: usrpw, address, phone, name, role } = isEmailMatch;
-    const usr = { uuid, email: username, password: usrpw, role };
-    const token = createJWT(usr);
-    const authUserInfo = { uuid, email, address, phone, name };
+    const { uuid, role } = isEmailMatch
+    const token = createJWT({ uuid, role });
 
-    return { token, authUserInfo };
+    return { token };
   }
 
   static async logout({ token, localBlackList }) {

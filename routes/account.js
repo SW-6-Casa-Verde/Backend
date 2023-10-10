@@ -39,6 +39,7 @@ accountRouter.post(
     if (errorMessage) {
       throw { status, message: errorMessage };
     }
+
     res.status(200).json({ status: 200, message: "회원 가입이 완료되었습니다." });
   })
 );
@@ -47,13 +48,25 @@ accountRouter.get(
   "/login",
   asyncHandler(async (req, res, next) => {
     const token = req.cookies.token;
-    const { status, errorMessage } = await verifyJWT(token);
-    if (errorMessage) {
+    const decodedToken = await verifyJWT(token);
+    if (decodedToken.errorMessage) {
+      const { status, errorMessage } = decodedToken;
       throw { status, message: errorMessage };
     }
     // 다음 라우터로 못가나..?
     // 로그인 유지는 세션있어야 가능할듯..
-    res.status(200).json({ status: 200, message: "로그인 되어 있는 사용자입니다." });
+    const authUserInfo = await UserService.getUserInfo(decodedToken.uuid);
+    if (authUserInfo.errorMessage) {
+      const { status, errorMessage } = authUserInfo;
+      throw { status, message: errorMessage };
+    }
+
+    res.status(200)
+      .json({ 
+        status: 200, 
+        message: "로그인 되어 있는 사용자입니다.", 
+        data: authUserInfo 
+      });
   })
 );
 
@@ -68,8 +81,8 @@ accountRouter.post(
     if (error) throw { status: 400, message: "요청한 값을 다시 확인해주세요." };
 
     const user = await AccountService.login(value);
-    const { authUserInfo, token } = user;
-    if (!authUserInfo) {
+    const { token } = user;
+    if (!token) {
       const { status, errorMessage } = user;
       throw { status, message: errorMessage };
     }
@@ -78,7 +91,7 @@ accountRouter.post(
     // 쿠키를 주는 것까지는 했으니 세션에 담아두기 위해
     // 세션 구현 이후 post에서 data 주는거 get으로 옮기기
     res.cookie("token", token, { httpOnly: true });
-    res.status(200).json({ status: 200, message: "로그인 성공.", data: authUserInfo });
+    res.status(200).json({ status: 200, message: "로그인 성공." });
   })
 );
 
