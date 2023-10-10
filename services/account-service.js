@@ -3,6 +3,31 @@ import { createJWT } from "../utils/jwt";
 import { User } from "../db";
 
 class AccountService {
+  static async localLogin(user) {
+    const { email, password } = user;
+    const errorJson = { status: 401, message: "로그인에 실패하였습니다." };
+
+    const isEmailMatch = await User.findByEmail(email);
+    if (!isEmailMatch) return errorJson;
+
+    const isPasswordMatch = bcrypt.compareSync(password, isEmailMatch.password);
+    if (!isPasswordMatch) return errorJson;
+
+    const { uuid, email: userEmail, role, name } = isEmailMatch;
+    const userInfo = {
+      uuid, 
+      email: userEmail,
+      role, 
+      name,
+    };
+
+    return userInfo;
+  }
+
+  static async socialLogin() {
+    
+  }
+
   static async login(user) {
     const { email, password } = user;
     const errorMessage = "로그인에 실패하였습니다.";
@@ -17,17 +42,14 @@ class AccountService {
       return { status: 401, errorMessage };
     }
 
-    // 추후 세션 구현하면 민감한 정보는 넣지 않도록 하기
-    const { uuid, email: username, password: usrpw, address, phone, name, role } = isEmailMatch;
-    const usr = { uuid, email: username, password: usrpw, role };
-    const token = createJWT(usr);
-    const authUserInfo = { uuid, email, address, phone, name };
+    const { uuid, role } = isEmailMatch
+    const token = createJWT({ uuid, role });
 
-    return { token, authUserInfo };
+    return { token };
   }
 
   static async logout({ token, localBlackList }) {
-    return localBlackList.add(token);
+    if (token) return localBlackList.add(token);
   }
 }
 

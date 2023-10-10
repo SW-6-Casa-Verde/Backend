@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { UserService } from "../services";
+import { AccountService, UserService } from "../services";
 import asyncHandler from "../utils/asyncHandler";
-import { verifyJWT } from "../utils/jwt";
 import checkAuth from "../utils/checkAuth";
 import { validateUserUpdate } from "../validators";
+import { userRole } from "../constants";
 
 const usersRouter = Router();
 
@@ -12,14 +12,12 @@ const usersRouter = Router();
 usersRouter.get(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
-    // 사용자 일치 여부 확인
-    const decodedToken = await verifyJWT(req.token);
-    const clientUuid = req.params.uuid;
     const currentUser = req.user;
-    const authResult = checkAuth(currentUser, decodedToken, clientUuid);
+    const clientUuid = req.params.uuid;
+    const authResult = checkAuth(currentUser, clientUuid);
     if (authResult) {
       const { status, message } = authResult;
-      throw { status, message };
+      throw { status, message }
     }
 
     const userInfo = await UserService.getUserInfo(clientUuid);
@@ -27,6 +25,7 @@ usersRouter.get(
       const { status, errorMessage } = userInfo;
       throw { status, message: errorMessage };
     }
+
     res.status(200).json({ status: 200, message: "사용자 조회 성공.", data: userInfo });
   })
 );
@@ -36,18 +35,17 @@ usersRouter.patch(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
     // 사용자 일치 여부 확인
-    const decodedToken = await verifyJWT(req.token);
-    const clientUuid = req.params.uuid;
     const currentUser = req.user;
-    const authResult = checkAuth(currentUser, decodedToken, clientUuid);
+    const clientUuid = req.params.uuid;
+    const authResult = checkAuth(currentUser, clientUuid);
     if (authResult) {
       const { status, message } = authResult;
-      throw { status, message };
+      throw { status, message }
     }
 
-    const { data } = req.body;
+    const updateUserInfo = req.body;
     // 데이터 유효성 검사
-    const { error, value } = await validateUserUpdate(data);
+    const { error, value } = await validateUserUpdate(updateUserInfo);
     if (error) throw { status: 400, message: "요청한 값을 다시 확인해주세요." };
 
     const updateUser = await UserService.setUserInfo({ currentUser, clientUuid, value });
@@ -64,20 +62,27 @@ usersRouter.patch(
 usersRouter.delete(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
-    // 사용자 일치 여부 확인
-    const decodedToken = await verifyJWT(req.token);
-    const clientUuid = req.params.uuid;
     const currentUser = req.user;
-    const authResult = checkAuth(currentUser, decodedToken, clientUuid);
+    const clientUuid = req.params.uuid;
+    const authResult = checkAuth(currentUser, clientUuid);
     if (authResult) {
       const { status, message } = authResult;
-      throw { status, message };
+      throw { status, message }
     }
 
     const deleteUser = await UserService.deleteUser(clientUuid);
     if (deleteUser.errorMessage) {
       const { status, errorMessage } = deleteUser;
       throw { status, message: errorMessage };
+    }
+
+    if (currentUser.role !== userRole.ADMIN) {
+      const token = req.cookies.token;
+      const localBlackList = req.app.locals.blacklist;
+
+      await AccountService.logout(token, localBlackList);
+
+      res.clearCookie("token");
     }
 
     res.status(200).json({ status: 204, message: "사용자 삭제 성공." });
