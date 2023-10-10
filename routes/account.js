@@ -84,7 +84,7 @@ accountRouter.post(
   asyncHandler(async (req, res, next) => {
     const { role, uuid } = req.user // localStratery 끝나고 받아온 데이터는 뭐로 받음?
     const token = await createJWT({ role, uuid });
-    
+
     res.cookie("token", token, { httpOnly: true });
     res.status(200).json({ status: 200, message: "로그인 성공." });
   })

@@ -24,7 +24,7 @@ class AccountService {
     return userInfo;
   }
 
-  static async socialNaverLogin() {
+  static async socialLogin() {
     
   }
 
