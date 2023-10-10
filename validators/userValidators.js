@@ -28,15 +28,15 @@ const passwordPattern = /^(?=.*[A-Za-z])(?=.*[!@#$])[A-Za-z0-9!@#$]*$/;
  * @type {RegExp}
  * @const
  */
-const namePattern = /^[a-zA-Z가-힣0-9]{2,12}$/;
+const namePattern = /^[^'"!@#$%^&*()_+{}[\]:;<>,.?/~`|\\]+$/;
 const phoneNumberPattern = /^\d{3}-\d{3,4}-\d{4}$/;
 
 const emailJoi = Joi.string().trim().min(10).max(30).email();
 const passwordJoi = Joi.string().trim().min(8).max(30).regex(passwordPattern);
 const addressJoi = Joi.string().trim();
 const phoneJoi = Joi.string().trim().regex(phoneNumberPattern);
-const nameJoi = Joi.string().trim().max(8);
-const roleJoi = Joi.string().valid(USER, ADMIN);
+const nameJoi = Joi.string().trim().min(2).max(10);
+// const roleJoi = Joi.string().valid(USER, ADMIN);
 
 const emailJoiSchema = Joi.object({
   email: emailJoi.required()
@@ -60,7 +60,6 @@ const userUpdateJoiSchema = Joi.object({
   address: addressJoi,
   phone: phoneJoi,
   name: nameJoi.regex(namePattern),
-  role: roleJoi,
 });
 
 // 이메일 데이터 검증
