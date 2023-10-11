@@ -3,18 +3,19 @@ import { User } from "../db";
 
 class AccountService {
   static async googleLogin({ email, password }) {
-    const errorMessage = "로그인에 실패하였습니다.";
+    const message = "로그인에 실패하였습니다.";
 
     const user = await User.findByEmail(email);
 
     if (!user || user.uuid === "guest_id") {
-      return { status: 401, errorMessage };
+      console.log("?");
+      return { status: 401, message };
     }
 
     const isPasswordMatch = await bcrypt.compareSync(password, user.password);
 
     if (!isPasswordMatch) {
-      return { status: 401, errorMessage };
+      return { status: 401, message };
     }
 
     const { uuid, role } = user;

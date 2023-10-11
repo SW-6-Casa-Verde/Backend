@@ -2,25 +2,27 @@ import { Router } from "express";
 import passport from "passport";
 import { createJWT } from "../utils/jwt";
 import { AccountService } from "../services/account-service";
-import asyncHandler from "../utils/asyncHandler";
 const authRouter = Router();
 
 authRouter.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
-authRouter.get(
-  "/google/callback",
-  passport.authenticate("google", { session: false }),
-  asyncHandler(async (req, res) => {
-    console.log("req.user : ", req.user);
-    const { uuid, role, errorMessage } = await AccountService.googleLogin({ email: req.user.email, password: "GOOGLE_OAUTH" });
+authRouter.get("/google/callback", (req, res, next) => {
+  passport.authenticate("google", { session: false }, async (err, user, info) => {
+    if (err) {
+      return next({ status: 404, message: err });
+    }
+
+    const { uuid, role, errorMessage } = await AccountService.googleLogin({ email: user.email, password: "GOOGLE_OAUTH" });
+
     if (errorMessage) {
       console.log(errorMessage);
-      throw { status: 404, message: errorMessage };
+      return next({ status: 404, message: errorMessage });
     }
+
     const token = await createJWT({ uuid, role });
     res.cookie("token", token, { httpOnly: true });
     res.redirect("/");
-  })
-);
+  })(req, res, next);
+});
 
 export { authRouter };
