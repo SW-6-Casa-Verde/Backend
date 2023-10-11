@@ -1,6 +1,10 @@
 const corsOptionsProvider = (req, callback) => {
   const origin = req.header('Origin');
-  const allowlist = [process.env.DEV_HOST, process.env.PRODUCT_HOST];
+  const allowlist = [
+    process.env.DEV_HOST, 
+    process.env.PRODUCT_HOST, 
+    process.env_CLIENT_LIVE_SERVER
+  ];
   const isAllowed = allowlist.includes(origin);
 
   if (!isAllowed) {
@@ -12,7 +16,7 @@ const corsOptionsProvider = (req, callback) => {
   const corsOptions = {
     origin: origin,
     methods: 'GET, POST, PATCH, PUT, DELETE', // 허용할 HTTP 메서드 목록
-    credentials: true, 
+    credentials: 'include',
   };
 
   callback(null, corsOptions);
