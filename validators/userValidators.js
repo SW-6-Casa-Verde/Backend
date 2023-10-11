@@ -34,6 +34,7 @@ const phoneNumberPattern = /^\d{3}-\d{3,4}-\d{4}$/;
 const emailJoi = Joi.string().trim().min(10).max(30).email();
 const passwordJoi = Joi.string().trim().min(8).max(30).regex(passwordPattern);
 const addressJoi = Joi.string().trim();
+const detailAddressJoi = Joi.string().trim();
 const phoneJoi = Joi.string().trim().regex(phoneNumberPattern);
 const nameJoi = Joi.string().trim().min(2).max(10);
 // const roleJoi = Joi.string().valid(USER, ADMIN);
@@ -51,6 +52,7 @@ const userJoiSchema = Joi.object({
   email: emailJoi.required(),
   password: passwordJoi.required(),
   address: addressJoi.required(),
+  detail_address: detailAddressJoi,
   phone: phoneJoi.required(),
   name: nameJoi.allow(""),
 });
@@ -58,6 +60,7 @@ const userJoiSchema = Joi.object({
 const userUpdateJoiSchema = Joi.object({
   password: passwordJoi,
   address: addressJoi,
+  detail_address: detailAddressJoi,
   phone: phoneJoi,
   name: nameJoi.regex(namePattern),
 });

@@ -30,17 +30,20 @@ class UserService {
 
     // 비밀번호 해쉬
     const hashedPassword = await bcrypt.hash(password, 10);
-    let { address, phone, name } = newUser;
+    let { address, detail_address, phone, name } = newUser;
     name = !name ? undefined : name;
+    detail_address = !detail_address ? "" : detail_address;
 
     const validatedUser = {
       uuid: uuidv4(),
       email,
       password: hashedPassword,
       address,
+      detail_address,
       phone,
       name,
       role: userRole.USER,
+      is_social_user: false
     };
     const createNewUser = await User.create(validatedUser);
     // createNewUser error check
@@ -58,8 +61,8 @@ class UserService {
       const errorMessage = "사용자 조회에 실패하였습니다.";
       return { status: 400, errorMessage };
     }
-    const { uuid, email, address, phone, name } = getUser;
-    return { uuid, email, address, phone, name };
+    const { uuid, email, address, detail_address, phone, name } = getUser;
+    return { uuid, email, address, detail_address, phone, name };
   }
 
   static async setUserInfo({ currentUser, clientUuid, value }) {

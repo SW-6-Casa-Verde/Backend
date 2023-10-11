@@ -20,14 +20,15 @@ const UserSchema = new Schema({
   },
   address: {
     type: String,
-    required: true,
+  },
+  detail_address: {
+    type: String
   },
   detail_address: {
     type: String,
   },
   phone: {
     type: String,
-    required: true,
   },
   name: {
     type: String,
@@ -39,8 +40,8 @@ const UserSchema = new Schema({
   },
   is_sns_user: {
     type: Boolean,
-    default: () => false,
-  },
+    default: () => false
+  }
 });
 
 export default UserSchema;
