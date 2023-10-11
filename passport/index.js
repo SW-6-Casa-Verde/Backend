@@ -5,10 +5,10 @@ import sessionConfig from "./sessionConfig";
 import local from "./strategies/local";
 import jwt from "./strategies/jwt";
 import google from "./strategies/google";
+import kakao from "./strategies/kakao";
 
 // passport.serializeUser((user, done) => {
 //   done(null, user);
-//   console.log(user);
 // });
 
 // passport.deserializeUser((user, done) => {
@@ -18,5 +18,6 @@ import google from "./strategies/google";
 passport.use(local);
 passport.use(jwt);
 passport.use(google);
+passport.use(kakao);
 
 export { passport, session, sessionConfig };
