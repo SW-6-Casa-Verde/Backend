@@ -28,7 +28,7 @@ class AccountService {
       return { status: 401, errorMessage };
     }
 
-    const isPasswordMatch = bcrypt.compareSync(password, isEmailMatch.password);
+    const isPasswordMatch = bcrypt.compareSync(password, user.password);
     if (!isPasswordMatch) {
       return { status: 401, errorMessage };
     }

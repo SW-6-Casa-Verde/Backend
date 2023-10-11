@@ -78,15 +78,15 @@ itemRouter.post(
       throw { status: 400, message: "잘못된 요청입니다. 요청한 값을 다시 확인해주세요." };
     }
 
-    const main_images_url = req.files.main_images.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`);
-    const images_url = req.files.images?.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`) || [];
+    const mainImagesUrl = req.files.main_images.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`);
+    const imagesUrl = req.files.images?.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`) || [];
 
     const item = await ItemService.addItem({
       name,
       price,
       description,
-      main_images: main_images_url,
-      images: images_url,
+      main_images: mainImagesUrl,
+      images: imagesUrl,
       category,
     });
 
