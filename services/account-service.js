@@ -28,7 +28,7 @@ class AccountService {
 
     // 존재하면 정보 조회 후 갱신
     if (findUser) return findUser; 
-    
+
     // 존재하지 않는다면 회원 가입
     const username = nickname ? nickname : name;
     const newNaverUser = await User.create({
