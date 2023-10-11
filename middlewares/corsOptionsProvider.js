@@ -15,8 +15,8 @@ const corsOptionsProvider = (req, callback) => {
 
   const corsOptions = {
     origin: origin,
-    methods: 'GET, POST, PATCH, PUT, DELETE', // 허용할 HTTP 메서드 목록
-    credentials: 'include',
+    methods: 'GET, POST, PATCH, PUT, DELETE, OPTIONS', // 허용할 HTTP 메서드 목록
+    credentials: true,
   };
 
   callback(null, corsOptions);
