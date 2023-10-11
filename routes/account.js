@@ -82,7 +82,7 @@ accountRouter.post(
   "/login",
   passport.authenticate('local', { session: false }),
   asyncHandler(async (req, res, next) => {
-    const { role, uuid } = req.user // localStratery 끝나고 받아온 데이터는 뭐로 받음?
+    const { role, uuid } = req.user; 
     const token = await createJWT({ role, uuid });
 
     res.cookie("token", token, { httpOnly: true });
@@ -99,7 +99,9 @@ accountRouter.post(
     // 예방 차원에서 블랙리스트 운용
     const token = req.cookies.token;
     const localBlackList = req.app.locals.blacklist;
-
+    let localAuthInfo = req.app.locals.authorization;
+    localAuthInfo = {};
+    
     await AccountService.logout({ token, localBlackList });
 
     res.clearCookie("token");

@@ -14,9 +14,8 @@ export default function jwtLoginRequired() {
     const localBlackList = req.app.locals.blacklist;
 
     if (decode.errorMessage || localBlackList.has(token)) {
-      localBlackList.add(token);
-      console.log(localBlackList);
       const { status, errorMessage } = decode;
+      if (errorMessage) localBlackList.add(token);
       return next({ status, message: errorMessage });
     }
 
