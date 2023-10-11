@@ -30,7 +30,9 @@ async function findOrCreateUser({ name, email }) {
 
 export default new GoogleStrategy(config, async (accessToken, refreshToken, profile, done) => {
   const { email, name } = profile._json;
-  console.log(profile);
+  if (!email || !name) {
+    return done("허용되지 않은 값이 있습니다.", null);
+  }
 
   try {
     const user = await findOrCreateUser({ email, name });
