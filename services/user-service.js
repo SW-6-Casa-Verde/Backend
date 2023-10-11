@@ -21,13 +21,11 @@ class UserService {
       const errorMessage = isEmailUnique.errorMessage;
       return { status: 409, errorMessage };
     }
-
     // role 검증
     // 클라이언트에서 받아올 값은 아니지만 잘못된 값 처리를 위한 로직
     if (typeof newUser.role !== "undefined") {
       return { status: 403, errorMessage: "Invalid User Role." };
     }
-
     // 비밀번호 해쉬
     const hashedPassword = await bcrypt.hash(password, 10);
     let { address = "", detail_address = "", phone = "", name = undefined, is_sns_user } = newUser;
@@ -43,6 +41,7 @@ class UserService {
       role: userRole.USER,
       is_sns_user,
     };
+
     const createNewUser = await User.create(validatedUser);
     // createNewUser error check
     if (!createNewUser) {

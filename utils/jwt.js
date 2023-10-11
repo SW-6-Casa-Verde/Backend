@@ -4,8 +4,8 @@ import urlSafeBase64 from "./urlSafeBase64";
 const JWT_SECRET_KEY = urlSafeBase64(process.env.JWT_KEY);
 const option = {
   expiresIn: "12h",
-  algorithm: "HS256"
-}
+  algorithm: "HS256",
+};
 
 // JWT 생성
 async function createJWT(payload) {
