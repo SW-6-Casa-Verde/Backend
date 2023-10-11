@@ -43,12 +43,12 @@ const { blacklist, setBlacklist } = jwtLoginRequired();
 app.locals.blacklist = blacklist;
 
 // API 라우터 등록
-app.use("api/", accountRouter);
-app.use("api/users", setBlacklist, usersRouter);
-app.use("api/order", orderRouter);
-app.use("api/categories", categoryRouter);
-app.use("api/items", itemRouter);
-app.use("api/auth", authRouter);
+app.use("/api/", accountRouter);
+app.use("/api/users", setBlacklist, usersRouter);
+app.use("/api/order", orderRouter);
+app.use("/api/categories", categoryRouter);
+app.use("/api/items", itemRouter);
+app.use("/api/auth", authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
