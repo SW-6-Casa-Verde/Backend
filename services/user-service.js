@@ -28,9 +28,7 @@ class UserService {
     }
     // 비밀번호 해쉬
     const hashedPassword = await bcrypt.hash(password, 10);
-    let { address, detail_address = "", phone = "", name = undefined, is_sns_user } = newUser;
-    // name = !name ? undefined : name;
-    // detail_address = !detail_address ? "" : detail_address;
+    let { address = "", detail_address = "", phone = "", name = undefined, is_sns_user } = newUser;
 
     const validatedUser = {
       uuid: uuidv4(),
