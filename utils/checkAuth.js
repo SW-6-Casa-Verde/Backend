@@ -1,8 +1,9 @@
 import { userRole } from "../constants";
 
-export default function checkAuth(adminUser, decodedToken, clientUuid) {
-    if (adminUser.role === userRole.ADMIN) return;
-    else if (decodedToken.uuid !== clientUuid) {
+export default function checkAuth(user, clientUuid) {
+    const { role, uuid } = user;
+    if (role === userRole.ADMIN) return;
+    else if (uuid !== clientUuid) {
         return { status: 401, message: "Unauthorized" };
     }
     return;

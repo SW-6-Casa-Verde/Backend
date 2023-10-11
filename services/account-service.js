@@ -41,7 +41,7 @@ class AccountService {
   }
 
   static async logout({ token, localBlackList }) {
-    return localBlackList.add(token);
+    if (token) return localBlackList.add(token);
   }
 }
 
