@@ -9,7 +9,7 @@ import jwtLoginRequired from "./middlewares/jwt-login-required";
 import corsOptionsProvider from "./middlewares/corsOptionsProvider";
 import { passport } from "./passport";
 
-import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter } from "./routes";
+import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter, kakaoAuthRouter } from "./routes";
 import { authRouter } from "./routes/auth";
 
 const app = express();
@@ -35,10 +35,10 @@ app.use("/uploads", express.static("uploads"));
 app.use(viewsRouter);
 
 // 세션 등록
-// app.use(session(sessionConfig));
+//app.use(session(sessionConfig));
 
 app.use(passport.initialize());
-// app.use(passport.session());
+//app.use(passport.session());
 
 const { blacklist, setBlacklist } = jwtLoginRequired();
 app.locals.blacklist = blacklist;
@@ -50,6 +50,7 @@ app.use("/api/order", orderRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/items", itemRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/auth", kakaoAuthRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

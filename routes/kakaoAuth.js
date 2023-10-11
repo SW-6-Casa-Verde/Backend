@@ -1,17 +1,28 @@
 import { Router } from "express";
 import passport from "passport";
 import { createJWT } from "../utils/jwt";
+import { AccountService } from "../services/account-service";
+import asyncHandler from "../utils/asyncHandler";
 
-const authRouter = Router();
+const kakaoAuthRouter = Router();
 
-authRouter.get("/kakao", passport.authenticate("kakao"));
+kakaoAuthRouter.get("/kakao", passport.authenticate("kakao"));
 
-authRouter.get("/kakao/callback", passport.authenticate("kakao", { failureRedirect: "/" }), (req, res) => {
-  const { uuid, role } = req.user;
-  const token = createJWT({ uuid, role });
+kakaoAuthRouter.get(
+  "/kakao/callback",
+  passport.authenticate("kakao", { session: false }),
+  asyncHandler(async (req, res) => {
+    const { uuid, role, errorMessage } = await AccountService.googleLogin({ email: req.user.email, password: "KAKAO_OAUTH" });
 
-  res.cookie("token", token, { httpOnly: true });
-  res.redirect("/");
-});
+    if (errorMessage) {
+      throw { status: 404, message: errorMessage };
+    }
 
-export { authRouter };
+    const token = await createJWT({ role, uuid });
+
+    res.cookie("token", token, { httpOnly: true });
+    res.status(200).json({ status: 200, message: "로그인 성공." });
+  })
+);
+
+export { kakaoAuthRouter };
