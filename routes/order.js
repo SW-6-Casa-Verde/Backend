@@ -193,7 +193,6 @@ orderRouter.patch(
   })
 );
 
-//!!! order삭제하고 orderITem 삭제하고,,, 번거롭,, 방법? look-up?
 // admin 주문취소 라우터
 orderRouter.delete(
   "/admin/:id",

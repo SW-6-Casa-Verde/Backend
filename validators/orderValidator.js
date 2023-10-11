@@ -16,6 +16,7 @@ const orderJoiSchema = Joi.object({
   total_price: Joi.number().required(),
   name: Joi.string().required(),
   address: Joi.string().required(),
+  detail_address: Joi.string(),
   phone: Joi.string().required(),
   request: Joi.string(),
   pay_method: Joi.string()
