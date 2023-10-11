@@ -51,11 +51,6 @@ itemRouter.get(
     const { id } = req.params;
     const category = req.category;
 
-    const { error } = await validateItem({ id });
-    if (error) {
-      throw { status: 404, message: "요청한 값을 다시 확인해주세요." };
-    }
-
     const item = await ItemService.getItem({ category, id });
 
     if (item.errorMessage) {
@@ -119,10 +114,7 @@ itemRouter.put(
     const main_images_url = req.files.main_images.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`);
     const images_url = req.files.images?.map((img) => `${SERVER_URI}/${img.path.replace(/\\/g, "/")}`) || [];
 
-    const item = await ItemService.setItem(
-      { id },
-      { name, price, description, main_images: main_images_url, images: images_url, category }
-    );
+    const item = await ItemService.setItem({ id }, { name, price, description, main_images: main_images_url, images: images_url, category });
 
     if (item.errorMessage) {
       throw { status: 404, message: item.errorMessage };

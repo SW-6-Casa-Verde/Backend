@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { userRole } from "../constants";
 
 class AccountService {
-  static async socialLogin({ name, email }) {
+  static async kakaoLogin({ name, email }) {
     const user = await User.findByEmail(email);
 
     if (user) return user;
@@ -20,12 +20,12 @@ class AccountService {
     });
   }
 
-  static async login(user) {
+  static async googleLogin(user) {
     const { email, password } = user;
     const errorMessage = "로그인에 실패하였습니다.";
 
-    const isEmailMatch = await User.findByEmail(email);
-    if (!isEmailMatch || isEmailMatch?.uuid === "guest_id") {
+    const user = await User.findByEmail(email);
+    if (!user || user.uuid === "guest_id") {
       return { status: 401, errorMessage };
     }
 
@@ -34,15 +34,13 @@ class AccountService {
       return { status: 401, errorMessage };
     }
 
-    const { uuid, role } = isEmailMatch;
-    const token = createJWT({ uuid, role });
+    const { uuid, role } = user;
 
-    return { token };
+    return { uuid, role };
   }
 
   static async logout({ token, localBlackList }) {
     if (token) return localBlackList.add(token);
   }
 }
-
 export { AccountService };

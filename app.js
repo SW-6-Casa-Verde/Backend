@@ -9,10 +9,17 @@ import jwtLoginRequired from "./middlewares/jwt-login-required";
 import corsOptionsProvider from "./middlewares/corsOptionsProvider";
 import { passport } from "./passport";
 
-import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter, authRouter } from "./routes";
+import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter } from "./routes";
+import { authRouter } from "./routes/auth";
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.DEV_HOST,
+    methods: "GET, POST, PATCH, PUT, DELETE, OPTIONS", // 클라이언트 요청 시 대문자 요청
+    credentials: true,
+  })
+);
 
 // view engine setup
 // app.set("views", path.join(__dirname, "views"));
