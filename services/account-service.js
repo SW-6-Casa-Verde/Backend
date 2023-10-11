@@ -20,8 +20,7 @@ class AccountService {
     });
   }
 
-  static async googleLogin(user) {
-    const { email, password } = user;
+  static async googleLogin({ email, password }) {
     const errorMessage = "로그인에 실패하였습니다.";
 
     const user = await User.findByEmail(email);
