@@ -1,6 +1,7 @@
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { User } from "../../db";
 import { createJWT } from "../../utils/jwt";
+import { UserService } from "../../services/user-service";
 
 const config = {
   clientID: process.env.google_clientID,
@@ -15,12 +16,10 @@ async function findOrCreateUser({ name, email }) {
     return user;
   }
 
-  const created = await User.create({
+  const created = await UserService.addUser({
     name,
     email,
     password: "GOOGLE_OAUTH",
-    address: ".z",
-    phone: ".",
     role: "USER",
   });
   //user service의 addUser를 사용하는 게 더 좋을 것 같은데 그러면 address phone은 required 풀어야 될 듯

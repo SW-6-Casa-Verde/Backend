@@ -3,12 +3,12 @@ import { createJWT } from "../utils/jwt";
 import { User } from "../db";
 
 class AccountService {
-  static async login(user) {
+  static async googleLogin(user) {
     const { email, password } = user;
     const errorMessage = "로그인에 실패하였습니다.";
 
-    const isEmailMatch = await User.findByEmail(email);
-    if (!isEmailMatch || isEmailMatch?.uuid === "guest_id") {
+    const user = await User.findByEmail(email);
+    if (!user || user.uuid === "guest_id") {
       return { status: 401, errorMessage };
     }
 
@@ -17,10 +17,9 @@ class AccountService {
       return { status: 401, errorMessage };
     }
 
-    const { uuid, role } = isEmailMatch
-    const token = createJWT({ uuid, role });
+    const { uuid, role } = user;
 
-    return { token };
+    return { uuid, role };
   }
 
   static async logout({ token, localBlackList }) {

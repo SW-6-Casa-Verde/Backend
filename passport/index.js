@@ -6,14 +6,14 @@ import local from "./strategies/local";
 import jwt from "./strategies/jwt";
 import google from "./strategies/google";
 
-passport.serializeUser((user, done) => {
-  done(null, user);
-  console.log(user);
-});
+// passport.serializeUser((user, done) => {
+//   done(null, user);
+//   console.log(user);
+// });
 
-passport.deserializeUser((user, done) => {
-  done(null, user);
-});
+// passport.deserializeUser((user, done) => {
+//   done(null, user);
+// });
 
 passport.use(local);
 passport.use(jwt);

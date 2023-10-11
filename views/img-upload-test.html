@@ -19,12 +19,12 @@
     const formBox = document.querySelector("#formBox");
 
     formBox.addEventListener("submit", async (e) => {
-      e.preventDefault();
+      /*e.preventDefault();
 
       const formData = new FormData(formBox);
 
       console.log("요청을 보냅니다.");
-      /*     const res = await fetch(`http://kdt-sw-6-team08.elicecoding.com/categories/1/items`, {
+           const res = await fetch(`http://kdt-sw-6-team08.elicecoding.com/categories/1/items`, {
         method: "POST",
         body: formData,
       });
@@ -44,11 +44,22 @@
       });
       const data = await res.json();
 
-      console.log("응답 데이터 : ", data);*/
+      console.log("응답 데이터 : ", data);
+      const res = await fetch(`http://kdt-sw-6-team08.elicecoding.com/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: "admin@admin.com",
+          password: "adminadmin@",
+        }),
+      });
+      const data = await res.json();
+      console.log("login ", data);
 
       const res1 = await fetch(`http://kdt-sw-6-team08.elicecoding.com/categories`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({
           data: {
             id: 88,
@@ -57,7 +68,7 @@
         }),
       });
       const data1 = await res1.json();
-      console.log("data1", data1);
+      console.log("data1", data1);*/
     });
   </script>
 </html>
