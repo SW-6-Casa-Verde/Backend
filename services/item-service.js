@@ -42,12 +42,12 @@ class ItemService {
 
     if (data.main_images && data.images) {
       item.main_images.forEach((imgUrl) =>
-        fs.unlink(imgUrl.replace(process.env.SERVER_URI + "/", ""), (err) => {
+        fs.unlink(imgUrl, (err) => {
           if (err) console.log("기존 사진 파일 삭제 실패 : ", err);
         })
       );
       item.images.forEach((imgUrl) =>
-        fs.unlink(imgUrl.replace(process.env.SERVER_URI + "/", ""), (err) => {
+        fs.unlink(imgUrl, (err) => {
           if (err) console.log("기존 사진 파일 삭제 실패 : ", err);
         })
       );
@@ -66,13 +66,13 @@ class ItemService {
     }
 
     item.main_images.forEach((imgUrl) =>
-      fs.unlink(imgUrl.replace(process.env.SERVER_URI + "/", ""), (err) => {
+      fs.unlink(imgUrl + "/", (err) => {
         if (err) console.log("기존 사진 파일 삭제 실패 : ", err);
       })
     );
 
     item.images.forEach((imgUrl) =>
-      fs.unlink(imgUrl.replace(process.env.SERVER_URI + "/", ""), (err) => {
+      fs.unlink(imgUrl + "/", (err) => {
         if (err) console.log("기존 사진 파일 삭제 실패 : ", err);
       })
     );
