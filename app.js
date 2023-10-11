@@ -31,6 +31,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 
+// 프론트 라우터 등록
+app.use(viewsRouter);
 // 세션 등록
 // app.use(session(sessionConfig));
 
@@ -40,16 +42,13 @@ app.use(passport.initialize());
 const { blacklist, setBlacklist } = jwtLoginRequired();
 app.locals.blacklist = blacklist;
 
-// 프론트 라우터 등록
-app.use("/", viewsRouter);
-
 // API 라우터 등록
-app.use("/", accountRouter);
-app.use("/users", setBlacklist, usersRouter);
-app.use("/order", orderRouter);
-app.use("/categories", categoryRouter);
-app.use("/items", itemRouter);
-app.use("/auth", authRouter);
+app.use("api/", accountRouter);
+app.use("api/users", setBlacklist, usersRouter);
+app.use("api/order", orderRouter);
+app.use("api/categories", categoryRouter);
+app.use("api/items", itemRouter);
+app.use("api/auth", authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

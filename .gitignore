@@ -21,6 +21,7 @@ test.js
 .env.development.local
 .env.test.local
 .env.production.local
+views/
 
 # 사용자 특정 파일 및 디렉토리 (예: 개인 설정 파일)
 config.js
