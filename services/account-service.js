@@ -15,8 +15,6 @@ class AccountService {
       name,
       email,
       password: "KAKAO_OAUTH",
-      address: "추가 기입 사항",
-      phone: "010-0000-0000",
       role: userRole.USER,
       is_sns_user: true,
     });
