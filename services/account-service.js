@@ -1,10 +1,12 @@
 import request from "request";
-import { User } from "../db";
 import { v4 as uuidv4 } from "uuid";
 import { userRole } from "../constants"
+import { User } from "../db";
 
 class AccountService {
-  static async socialLogin({ name, email }) {
+  static async login({ email, password }) {
+    const message = "로그인에 실패하였습니다.";
+
     const user = await User.findByEmail(email);
 
     if (user) return user;

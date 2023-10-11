@@ -22,9 +22,6 @@ const UserSchema = new Schema({
     type: String,
   },
   detail_address: {
-    type: String
-  },
-  detail_address: {
     type: String,
   },
   phone: {

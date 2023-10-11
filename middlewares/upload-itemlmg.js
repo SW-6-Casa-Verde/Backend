@@ -1,12 +1,15 @@
 import multer from "multer";
+import fs from "fs";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    console.log("multer in");
+    if (!fs.existsSync("./uploads/images")) {
+      fs.mkdirSync("./uploads/images", { recursive: true });
+    }
     cb(null, "uploads/images"); // 이미지 저장 경로
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}.png`); // 이미지 저장 파일명
+    cb(null, `${file.originalname}_${Date.now()}.png`); // 이미지 저장 파일명
   },
 });
 const itemImg = multer({ storage });
