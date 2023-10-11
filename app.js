@@ -33,6 +33,7 @@ app.use("/uploads", express.static("uploads"));
 
 // 프론트 라우터 등록
 app.use(viewsRouter);
+
 // 세션 등록
 // app.use(session(sessionConfig));
 
