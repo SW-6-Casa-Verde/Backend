@@ -4,7 +4,7 @@ import { AccountService } from "../../services";
 const config = {
     clientID: process.env.naver_clientID,
     clientSecret: process.env.naver_clientSecret,
-    callbackURL: `${process.env.DEV_HOST}/auth/naver/callback`,
+    callbackURL: `${process.env.DEV_HOST}/api/auth/naver/callback`,
 }
 
 const naver = new NaverStrategy(config, 
@@ -12,16 +12,25 @@ const naver = new NaverStrategy(config,
         try {
             const { _json } = profile;
             if (_json.message !== 'success') throw { status: 401, message: "네이버 인증 실패" };
-
-            const naverAuth = await AccountService.socialNaverLogin(_json.response, accessToken);
+            
+            const naverAuth = await AccountService.socialNaverLogin(_json.response);
             if (naverAuth.errorMessage) {
                 const { status, errorMessage } = naverAuth;
                 throw { status, message: errorMessage };
             }
 
-            naverAuth.authorization = { accessToken, refreshToken, provider: profile.provider }
+            const { uuid, role } = naverAuth;
+            const user = { 
+                uuid, 
+                role,
+                authorization: { 
+                    accessToken, 
+                    refreshToken, 
+                    provider: profile.provider 
+                }
+            }
 
-            done(null, naverAuth);
+            done(null, user);
         } catch (error) {
             done(error, null);
         }

@@ -5,27 +5,28 @@ import { AccountService } from "../services/account-service";
 
 const authRouter = Router();
 
-
 // 네이버
 authRouter.get("/naver", passport.authenticate("naver"));
 
-authRouter.get("/naver/callback", 
-  passport.authenticate("naver", { session: false, failureRedirect: '/login'}), 
-    async (req, res, next) => {
-      // console.log(req.query)
-      const localAuthInfo = req.app.locals.authorization;
-      const { accessToken, refreshToken, provider } = req.user.authorization;
-      localAuthInfo.accessToken = accessToken;
-      localAuthInfo.refreshToken = refreshToken;
-      localAuthInfo.provider = provider;
+authRouter.get("/naver/callback", (req, res, next) => {
+  passport.authenticate("naver", { session: false, failureRedirect: '/login'}, 
+    async (err, user) => {
+      if (err) {
+        const { status, message } = err;
+        return next({ status, message });
+      }
 
-      const { uuid, role } = req.user;
-      console.log(req.user)
-      const token = createJWT({ uuid, role });
+      const { uuid, role, authorization } = user;
+      const token = await createJWT({ uuid, role });
+
+      const localAuthInfo = req.app.locals.authorization;
+      localAuthInfo.authorization = authorization;
 
       res.cookie("token", token, { httpOnly: true });
       res.redirect("/");
-    }
+
+    })(req, res, next);
+  }
 );
 
 //구글
@@ -37,7 +38,7 @@ authRouter.get("/google/callback", (req, res, next) => {
       return next({ status: 404, message: err });
     }
 
-    const { uuid, role, errorMessage } = await AccountService.googleLogin({ email: user.email, password: "GOOGLE_OAUTH" });
+    const { uuid, role, errorMessage } = await AccountService.login({ email: user.email, password: "GOOGLE_OAUTH" });
 
     if (errorMessage) {
       console.log(errorMessage);
@@ -59,7 +60,7 @@ authRouter.get("/kakao/callback", (req, res, next) => {
       return next({ status: 404, message: err });
     }
 
-    const { uuid, role, errorMessage } = await AccountService.googleLogin({ email: user.email, password: "KAKAO_OAUTH" });
+    const { uuid, role, errorMessage } = await AccountService.login({ email: user.email, password: "KAKAO_OAUTH" });
 
     if (errorMessage) {
       return next({ status: 404, message: errorMessage });

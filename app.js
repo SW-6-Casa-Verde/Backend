@@ -6,8 +6,15 @@ import cors from "cors";
 import jwtLoginRequired from "./middlewares/jwt-login-required";
 import { passport } from "./passport";
 
-import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter } from "./routes";
-import { authRouter } from "./routes/auth";
+import { 
+  accountRouter, 
+  categoryRouter, 
+  itemRouter, 
+  usersRouter, 
+  orderRouter, 
+  viewsRouter, 
+  authRouter 
+} from "./routes";
 
 const app = express();
 app.use(
@@ -17,10 +24,6 @@ app.use(
     credentials: true,
   })
 );
-
-// view engine setup
-// app.set("views", path.join(__dirname, "views"));
-// app.set("view engine", "ejs");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -36,19 +39,18 @@ app.use(viewsRouter);
 
 app.use(passport.initialize());
 // app.use(passport.session());
+
 app.locals.authorization = {
   accessToken: null,
   refreshToken: null,
   provider: null
 };
 
-//app.use(passport.session());
-
 const { blacklist, setBlacklist } = jwtLoginRequired();
 app.locals.blacklist = blacklist;
 
 // API 라우터 등록
-app.use("/api/", accountRouter);
+app.use("/api", accountRouter);
 app.use("/api/users", setBlacklist, usersRouter);
 app.use("/api/order", orderRouter);
 app.use("/api/categories", categoryRouter);
