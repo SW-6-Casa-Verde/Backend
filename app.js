@@ -23,6 +23,7 @@ const app = express();
 // 기능 개발 끝나고 적용 테스트
 app.use(cors(corsOptionsProvider));
 
+
 // view engine setup
 // app.set("views", path.join(__dirname, "views"));
 // app.set("view engine", "ejs");
