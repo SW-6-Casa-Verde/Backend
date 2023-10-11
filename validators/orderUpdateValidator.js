@@ -13,6 +13,7 @@ const userOrderUpdateJoiSchema = Joi.object({
   id: Joi.string().hex().length(24).required(),
   name: Joi.string(),
   address: Joi.string(),
+  detail_address: Joi.string(),
   phone: Joi.string(),
   request: Joi.string(),
 });

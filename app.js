@@ -9,20 +9,10 @@ import jwtLoginRequired from "./middlewares/jwt-login-required";
 import corsOptionsProvider from "./middlewares/corsOptionsProvider";
 import { passport } from "./passport";
 
-import { 
-  accountRouter, 
-  categoryRouter, 
-  itemRouter, 
-  usersRouter, 
-  orderRouter, 
-  viewsRouter 
-} from "./routes";
+import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter, authRouter } from "./routes";
 
 const app = express();
-
-// 기능 개발 끝나고 적용 테스트
-app.use(cors(corsOptionsProvider));
-
+app.use(cors());
 
 // view engine setup
 // app.set("views", path.join(__dirname, "views"));
@@ -52,6 +42,7 @@ app.use("/users", setBlacklist, usersRouter);
 app.use("/order", orderRouter);
 app.use("/categories", categoryRouter);
 app.use("/items", itemRouter);
+app.use("/auth", authRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

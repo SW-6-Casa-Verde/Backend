@@ -22,6 +22,9 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  detail_address: {
+    type: String,
+  },
   phone: {
     type: String,
     required: true,
@@ -33,6 +36,10 @@ const UserSchema = new Schema({
   role: {
     type: String,
     enum: [USER, ADMIN],
+  },
+  is_sns_user: {
+    type: Boolean,
+    default: () => false,
   },
 });
 

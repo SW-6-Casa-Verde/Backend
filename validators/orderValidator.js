@@ -16,6 +16,7 @@ const orderJoiSchema = Joi.object({
   total_price: Joi.number().required(),
   name: Joi.string().required(),
   address: Joi.string().required(),
+  detail_address: Joi.string(),
   phone: Joi.string().required(),
   request: Joi.string(),
   pay_method: Joi.string()
@@ -28,8 +29,17 @@ const orderJoiSchema = Joi.object({
 });
 // hex문자열에 16진수 문자만 포함되어 있는지 확인하고 정확히 length24자로 구성된 문자열인지 확인
 
+const nonMemberOrderJoiSchema = Joi.object({
+  id: Joi.string().hex().length(24).required(),
+  name: Joi.string().required(),
+});
+
 async function validateOrder(data) {
   return orderJoiSchema.validate(data);
 }
 
-export { validateOrder };
+async function validateNonMemberOrder(data) {
+  return nonMemberOrderJoiSchema.validate(data);
+}
+
+export { validateOrder, validateNonMemberOrder };
