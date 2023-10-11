@@ -26,6 +26,10 @@ export default new KakaoStrategy(config, async (accessToken, refreshToken, profi
   const name = profile.displayName;
   const email = profile._json.kakao_account.email;
 
+  if (!email) {
+    return done("email 정보 제공에 동의해주세요", null);
+  }
+
   try {
     const user = await findOrCreateUser({ name, email });
     done(null, {
