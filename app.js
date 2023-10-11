@@ -1,15 +1,12 @@
 import createError from "http-errors";
 import express from "express";
-import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
 import cors from "cors";
-import dbBoot from "./db";
 import jwtLoginRequired from "./middlewares/jwt-login-required";
-import corsOptionsProvider from "./middlewares/corsOptionsProvider";
 import { passport } from "./passport";
 
-import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter, kakaoAuthRouter } from "./routes";
+import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter } from "./routes";
 import { authRouter } from "./routes/auth";
 
 const app = express();
@@ -50,7 +47,6 @@ app.use("/api/order", orderRouter);
 app.use("/api/categories", categoryRouter);
 app.use("/api/items", itemRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/auth", kakaoAuthRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
