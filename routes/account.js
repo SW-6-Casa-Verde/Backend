@@ -48,13 +48,14 @@ accountRouter.get(
   "/login",
   asyncHandler(async (req, res, next) => {
     const token = req.cookies.token;
+
     // 토큰이 없어도 에러는 아님. 
     let tokenUuid = null;
     if (token) {
       const decodedToken = await verifyJWT(token);
       if (!decodedToken.errorMessage) tokenUuid = decodedToken.uuid;
     }
-
+    console.log(req.app.locals.authorization)
     // 토큰 값 없으면 미들웨어 종료
     if (!tokenUuid) {
       return res.status(200).json({ 
@@ -99,7 +100,9 @@ accountRouter.post(
     // 예방 차원에서 블랙리스트 운용
     const token = req.cookies.token;
     const localBlackList = req.app.locals.blacklist;
-
+    const localAuthInfo = req.app.locals.authorization;
+    localAuthInfo = {};
+    
     await AccountService.logout({ token, localBlackList });
 
     res.clearCookie("token");

@@ -1,6 +1,5 @@
 import { Strategy as LocalStrategy } from "passport-local";
 import { AccountService } from "../../services";
-// import { strategiesEnum } from "../../constants";
 import { validateLogin } from "../../validators";
 
 const config = {

@@ -30,9 +30,7 @@ class UserService {
 
     // 비밀번호 해쉬
     const hashedPassword = await bcrypt.hash(password, 10);
-    let { address, detail_address, phone, name } = newUser;
-    name = !name ? undefined : name;
-    detail_address = !detail_address ? "" : detail_address;
+    let { address, detail_address="", phone="", name=undefined, is_sns_user } = newUser;
 
     const validatedUser = {
       uuid: uuidv4(),
@@ -43,8 +41,9 @@ class UserService {
       phone,
       name,
       role: userRole.USER,
-      is_social_user: false
+      is_sns_user
     };
+
     const createNewUser = await User.create(validatedUser);
     // createNewUser error check
     if (!createNewUser) {

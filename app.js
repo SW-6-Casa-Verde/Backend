@@ -29,6 +29,11 @@ app.use("/uploads", express.static("uploads"));
 
 app.use(passport.initialize());
 // app.use(passport.session());
+app.locals.authorization = {
+  accessToken: null,
+  refreshToken: null,
+  provider: null
+};
 
 const { blacklist, setBlacklist } = jwtLoginRequired();
 app.locals.blacklist = blacklist;
