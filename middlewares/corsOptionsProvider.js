@@ -2,8 +2,7 @@ const corsOptionsProvider = (req, callback) => {
   const origin = req.header('Origin');
   const allowlist = [
     process.env.DEV_HOST, 
-    process.env.PRODUCT_HOST, 
-    process.env_CLIENT_LIVE_SERVER
+    process.env.PRODUCT_HOST
   ];
   const isAllowed = allowlist.includes(origin);
 
