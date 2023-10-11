@@ -17,7 +17,7 @@ authRouter.get(
       console.log(errorMessage);
       throw { status: 404, message: errorMessage };
     }
-    const token = await createJWT({ uuid, role }); // 여기도 account service의 login 사용하면 좋을 듯
+    const token = await createJWT({ uuid, role });
     res.cookie("token", token, { httpOnly: true });
     res.redirect("/");
   })
