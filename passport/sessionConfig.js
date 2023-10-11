@@ -12,7 +12,7 @@ const sessionConfig = {
     secret: SESSION_SECRET_KEY, 
     resave: false, 
     saveUninitialized: true,
-    cookie: cookieConfig,
+    // cookie: cookieConfig,
     proxy: true,
     // 데이터베이스 같은 곳에도 저장 가능
     store: new session.MemoryStore(),

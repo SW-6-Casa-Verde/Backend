@@ -6,18 +6,18 @@ import logger from "morgan";
 import cors from "cors";
 import dbBoot from "./db";
 import jwtLoginRequired from "./middlewares/jwt-login-required";
-import { passport, session, sessionConfig } from "./passport";
+import corsOptionsProvider from "./middlewares/corsOptionsProvider";
+import { passport } from "./passport";
 
 import { accountRouter, categoryRouter, itemRouter, usersRouter, orderRouter, viewsRouter } from "./routes";
 import { authRouter } from "./routes/auth";
 
 const app = express();
-const whitelist = ["http://localhost:3000", "http://kdt-sw-6-team08.elicecoding.com"];
 app.use(
   cors({
-    origin: "http://localhost:3000",
-    methods: "GET, POST, PATCH, PUT, DELETE", // 클라이언트 요청 시 대문자 요청
-    credentials: "include",
+    origin: process.env.DEV_HOST,
+    methods: "GET, POST, PATCH, PUT, DELETE, OPTIONS", // 클라이언트 요청 시 대문자 요청
+    credentials: true,
   })
 );
 

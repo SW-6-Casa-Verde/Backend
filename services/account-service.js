@@ -5,26 +5,23 @@ import { User } from "../db";
 class AccountService {
   static async googleLogin(user) {
     const { email, password } = user;
-    const errorMessage = "로그인에 실패하였습니다.";
+    const errorJson = { status: 401, message: "로그인에 실패하였습니다." };
 
-    const user = await User.findByEmail(email);
-    if (!user || user.uuid === "guest_id") {
-      return { status: 401, errorMessage };
-    }
+    const isEmailMatch = await User.findByEmail(email);
+    if (!isEmailMatch) return errorJson;
 
     const isPasswordMatch = bcrypt.compareSync(password, isEmailMatch.password);
-    if (!isPasswordMatch) {
-      return { status: 401, errorMessage };
-    }
+    if (!isPasswordMatch) return errorJson;
 
-    const { uuid, role } = user;
+    const { uuid, email: userEmail, role, name } = isEmailMatch;
+    const userInfo = {
+      uuid, 
+      email: userEmail,
+      role, 
+      name,
+    };
 
-    return { uuid, role };
-  }
-
-  static async logout({ token, localBlackList }) {
-    return localBlackList.add(token);
+    return userInfo;
   }
 }
-
 export { AccountService };

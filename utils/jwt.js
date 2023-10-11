@@ -8,7 +8,7 @@ const option = {
 }
 
 // JWT 생성
-function createJWT(payload) {
+async function createJWT(payload) {
   return jwt.sign(payload, JWT_SECRET_KEY, option);
 }
 
