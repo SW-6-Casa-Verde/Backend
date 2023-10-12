@@ -54,6 +54,7 @@ class UserService {
 
   static async getUserInfo(userUuid) {
     const getUser = await User.findByUserId(userUuid);
+
     if (!getUser) {
       const errorMessage = "사용자 조회에 실패하였습니다.";
       return { status: 400, errorMessage };

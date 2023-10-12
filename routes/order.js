@@ -22,12 +22,12 @@ orderRouter.post(
       user_id: objectIdString,
       ...req.body,
     });
-    const { orderItems, ...orderData } = value;
 
     if (error) throw { status: 422, message: "주문정보를 다시 확인해주세요." };
 
-    const newOrder = await OrderService.addOrder(orderData, uuid);
+    const { orderItems, ...orderData } = value;
 
+    const newOrder = await OrderService.addOrder(orderData, uuid);
     if (newOrder.errorMessage) {
       throw {
         status: 404,
@@ -71,7 +71,7 @@ orderRouter.get(
   setBlacklist,
   asyncHandler(async (req, res) => {
     const { page = 1 } = req.params;
-    const { role } = req.user;
+    const { role, uuid } = req.user;
 
     if (isNaN(page) || parseInt(page) <= 0) {
       throw { status: 400, message: "Invalid page parameter" };
@@ -93,7 +93,16 @@ orderRouter.get(
         data: orders.orders,
       });
     } else if (role === "USER") {
-      const orders = await OrderService.getOrder({ user_id: req.user.uuid }, Number(page));
+      const userInfo = await UserService.getUserInfo(uuid);
+      const userId = userInfo._id.toHexString();
+
+      if (userInfo.errorMessage)
+        throw {
+          status: 422,
+          message: userInfo.errorMessage,
+        };
+
+      const { orders, totalPage } = await OrderService.getOrder({ user_id: userId }, Number(page));
 
       if (orders.errorMessage)
         throw {
@@ -101,10 +110,19 @@ orderRouter.get(
           message: orders.errorMessage,
         };
 
+      const getOrders = await Promise.all(
+        orders.map(async (order) => {
+          const orderItems = await OrderItemService.getOrderItem(order._id);
+
+          return { order, orderItems };
+        })
+      );
+
       return res.status(200).json({
         status: 200,
         message: "주문 목록 구매자 페이지입니다.",
-        data: orders,
+        data: getOrders,
+        totalPage: totalPage,
       });
     }
   })

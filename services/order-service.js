@@ -16,7 +16,6 @@ class OrderService {
   // role 조건문 빼고 매개변수 수정
   static async getOrder(data, page) {
     const perPage = 10;
-    console.log(data, page);
     const { orders, totalPage } = await Order.getPaginatedOrders(data, page, perPage);
 
     if (!orders) {
