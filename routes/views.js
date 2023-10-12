@@ -24,8 +24,8 @@ viewsRouter.use("/order-completed", serveStatic("order-completed"));
 // views 폴더의 최상단 파일인 rabbit.png, api.js 등을 쓸 수 있게 함
 viewsRouter.use("/", serveStatic(""));
 
-function serveStatic(resource) {
-  const resourcePath = path.join(__dirname, `../views/${resource}`);
+function serveStatic(resource, subFolder) {
+  const resourcePath = path.join(__dirname, subFolder ? `../views/${subFolder}/${resource}` : `../views/${resource}`);
   const option = { index: `${resource}.html` };
 
   return express.static(resourcePath, option);

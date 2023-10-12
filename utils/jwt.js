@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import urlSafeBase64 from "./urlSafeBase64";
+import dotenv from "dotenv";
+dotenv.config();
 
 const JWT_SECRET_KEY = urlSafeBase64(process.env.JWT_KEY);
 const option = {

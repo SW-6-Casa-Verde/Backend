@@ -28,7 +28,6 @@ orderRouter.post(
     const { orderItems, ...orderData } = value;
 
     const newOrder = await OrderService.addOrder(orderData, uuid);
-
     if (newOrder.errorMessage) {
       throw {
         status: 404,
@@ -105,6 +104,7 @@ orderRouter.get(
       const getOrders = await Promise.all(
         orders.map(async (order) => {
           const orderItems = await OrderItemService.getOrderItem(order._id);
+
           return { order, orderItems };
         })
       );

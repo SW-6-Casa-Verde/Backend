@@ -5,6 +5,30 @@ import { AccountService } from "../services/account-service";
 
 const authRouter = Router();
 
+// 네이버
+authRouter.get("/naver", passport.authenticate("naver"));
+
+authRouter.get("/naver/callback", (req, res, next) => {
+  passport.authenticate("naver", { session: false, failureRedirect: '/login'}, 
+    async (err, user) => {
+      if (err) {
+        const { status, message } = err;
+        return next({ status, message });
+      }
+
+      const { uuid, role, authorization } = user;
+      const token = await createJWT({ uuid, role });
+
+      const localAuthInfo = req.app.locals.authorization;
+      localAuthInfo.authorization = authorization;
+
+      res.cookie("token", token, { httpOnly: true });
+      res.redirect("/");
+
+    })(req, res, next);
+  }
+);
+
 //구글
 authRouter.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 

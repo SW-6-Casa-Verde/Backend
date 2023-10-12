@@ -16,11 +16,10 @@ class OrderItem {
     const orderItem_id = addOrderItem.item_id;
 
     await ItemModel.findByIdAndUpdate(orderItem_id, { $inc: { sales: addQuantity } });
-
     return addOrderItem;
   }
 
-  static async findById({ orderId }) {
+  static async findById(orderId) {
     return await OrderItemModel.find({ order_id: orderId });
   }
 
