@@ -43,7 +43,7 @@ class CategoryService {
 
     const updateIdCheck = await Category.findById({ id: data.id });
 
-    if (updateIdCheck && Number(id) !== data.id) {
+    if (updateIdCheck && Number(id) !== Number(data.id)) {
       const errorMessage = "해당 아이디가 이미 존재합니다.";
       return { errorMessage };
     }
