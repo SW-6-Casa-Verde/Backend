@@ -23,9 +23,6 @@ class Order {
   }
 
   static async getPaginatedOrders(data, page, perPage) {
-    const userId = await UserModel.findOne({ uuid: data.user_id });
-    data.user_id = userId._id;
-
     const [total, orders] = await Promise.all([
       OrderModel.countDocuments(data),
       OrderModel.find(data)

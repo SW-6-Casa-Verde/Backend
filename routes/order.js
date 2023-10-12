@@ -71,7 +71,7 @@ orderRouter.get(
   setBlacklist,
   asyncHandler(async (req, res) => {
     const { page = 1 } = req.params;
-    const { role } = req.user;
+    const { role, uuid } = req.user;
 
     if (isNaN(page) || parseInt(page) <= 0) {
       throw { status: 400, message: "Invalid page parameter" };
@@ -93,7 +93,16 @@ orderRouter.get(
         data: orders.orders,
       });
     } else if (role === "USER") {
-      const { orders, totalPage } = await OrderService.getOrder({ user_id: req.user.uuid }, Number(page));
+      const userInfo = await UserService.getUserInfo(uuid);
+      const userId = userInfo._id.toHexString();
+
+      if (userInfo.errorMessage)
+        throw {
+          status: 422,
+          message: userInfo.errorMessage,
+        };
+
+      const { orders, totalPage } = await OrderService.getOrder({ user_id: userId }, Number(page));
 
       if (orders.errorMessage)
         throw {
