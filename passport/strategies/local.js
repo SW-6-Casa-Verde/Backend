@@ -12,7 +12,7 @@ const local = new LocalStrategy(config, async (email, password, done) => {
         const { error, value } = await validateLogin({ email, password });
         if (error) throw { status: 400, message: "요청한 값을 다시 확인해주세요." };
 
-        const localUser = await AccountService.login(value);
+        const localUser = await AccountService.localLogin(value);
         if (localUser.message) {
             const { status, message } = localUser;
             throw { status, message };
