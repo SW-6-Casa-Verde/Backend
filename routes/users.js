@@ -7,8 +7,7 @@ import { userRole } from "../constants";
 
 const usersRouter = Router();
 
-// 사용자 정보 조회 (jwt 정보 활용 예정)
-// :uuid로 받고 role에 따라 분기 처리
+// 사용자 정보 조회
 usersRouter.get(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
@@ -30,7 +29,7 @@ usersRouter.get(
   })
 );
 
-// 사용자 정보 수정 (jwt 정보 활용 예정)
+// 사용자 정보 수정
 usersRouter.patch(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
@@ -58,7 +57,7 @@ usersRouter.patch(
   })
 );
 
-// 사용자 삭제 (회원 탈퇴) (jwt 정보 활용 예정)
+// 사용자 삭제 (회원 탈퇴)
 usersRouter.delete(
   "/:uuid",
   asyncHandler(async (req, res, next) => {
@@ -77,12 +76,9 @@ usersRouter.delete(
     }
 
     if (currentUser.role !== userRole.ADMIN) {
-      const token = req.cookies.token;
       const localBlackList = req.app.locals.blacklist;
-
-      await AccountService.logout(token, localBlackList);
-
-      res.clearCookie("token");
+      req.app.locals.authorization = {};
+      await AccountService.logout(currentUser, localBlackList);
     }
 
     res.status(200).json({ status: 204, message: "사용자 삭제 성공." });

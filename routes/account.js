@@ -46,8 +46,9 @@ accountRouter.post(
 
 accountRouter.get(
   "/login",
+  setBlacklist,
   asyncHandler(async (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.headers.authorization?.split('Bearer ')[1];
     // 토큰이 없어도 에러는 아님. 
     let tokenUuid = null;
     if (token) {
@@ -85,8 +86,12 @@ accountRouter.post(
     const { role, uuid } = req.user; 
     const token = await createJWT({ role, uuid });
 
-    res.cookie("token", token, { httpOnly: true });
-    res.status(200).json({ status: 200, message: "로그인 성공." });
+    res.status(200)
+      .json({ 
+        status: 200, 
+        message: "로그인 성공.", 
+        token: token 
+      });
   })
 );
 
@@ -97,14 +102,12 @@ accountRouter.post(
     // JWT는 일반적으로 시간 기반과 무작위한 요소를 포함하여 생성된다.
     // 서버에서 jwt 토큰을 제거는 할 수 있을지언정 만료되지 않은 토큰이면 탈취당하면 악용 가능
     // 예방 차원에서 블랙리스트 운용
-    const token = req.cookies.token;
+    const token = req.user;
     const localBlackList = req.app.locals.blacklist;
-    let localAuthInfo = req.app.locals.authorization;
-    localAuthInfo = {};
-    
+    req.app.locals.authorization = {};
+
     await AccountService.logout({ token, localBlackList });
 
-    res.clearCookie("token");
     res.status(200).json({ status: 204, message: "로그아웃 성공." });
   })
 );

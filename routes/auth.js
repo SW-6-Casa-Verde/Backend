@@ -6,10 +6,10 @@ import { AccountService } from "../services/account-service";
 const authRouter = Router();
 
 // 네이버
-authRouter.get("/naver", passport.authenticate("naver"));
+authRouter.get("/naver", passport.authenticate("naver", { authType: "reprompt" }));
 
 authRouter.get("/naver/callback", (req, res, next) => {
-  passport.authenticate("naver", { session: false, failureRedirect: '/login'}, 
+  passport.authenticate("naver", { session: false, failureRedirect: '/login' }, 
     async (err, user) => {
       if (err) {
         const { status, message } = err;
@@ -22,9 +22,7 @@ authRouter.get("/naver/callback", (req, res, next) => {
       const localAuthInfo = req.app.locals.authorization;
       localAuthInfo.authorization = authorization;
 
-      res.cookie("token", token, { httpOnly: true });
-      res.redirect("/");
-
+      res.status(200).json({ status: 200, message: "네이버 로그인 성공.", token: token });
     })(req, res, next);
   }
 );
@@ -46,8 +44,8 @@ authRouter.get("/google/callback", (req, res, next) => {
     }
 
     const token = await createJWT({ uuid, role });
-    res.cookie("token", token, { httpOnly: true });
-    res.redirect("/");
+
+    res.status(200).json({ status: 200, message: "구글 로그인 성공.", token: token });
   })(req, res, next);
 });
 
@@ -68,8 +66,7 @@ authRouter.get("/kakao/callback", (req, res, next) => {
 
     const token = await createJWT({ role, uuid });
 
-    res.cookie("token", token, { httpOnly: true });
-    res.status(200).json({ status: 200, message: "로그인 성공." });
+    res.status(200).json({ status: 200, message: "카카오 로그인 성공.", token: token });
   })(req, res, next);
 });
 
