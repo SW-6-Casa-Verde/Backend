@@ -7,6 +7,12 @@ viewsRouter.use("/", serveStatic("main"));
 viewsRouter.use("/cart", serveStatic("cart"));
 viewsRouter.use("/mypage", serveStatic("mypage"));
 viewsRouter.use("/manager", serveStatic("manager"));
+viewsRouter.use("/manager/category", serveStatic("category-management", "manager"));
+viewsRouter.use("/manager/item", serveStatic("item-management", "manager"));
+viewsRouter.use("/manager/order", serveStatic("order-management", "manager"));
+viewsRouter.use("/manager", serveStatic("manager"));
+viewsRouter.use("/manager", serveStatic("manager"));
+
 viewsRouter.use("/detail", serveStatic("detailpage"));
 viewsRouter.use("/common", serveStatic("common"));
 viewsRouter.use("/order", serveStatic("order"));

@@ -22,9 +22,10 @@ orderRouter.post(
       user_id: objectIdString,
       ...req.body,
     });
-    const { orderItems, ...orderData } = value;
 
     if (error) throw { status: 422, message: "주문정보를 다시 확인해주세요." };
+
+    const { orderItems, ...orderData } = value;
 
     const newOrder = await OrderService.addOrder(orderData, uuid);
 
@@ -93,7 +94,7 @@ orderRouter.get(
         data: orders.orders,
       });
     } else if (role === "USER") {
-      const orders = await OrderService.getOrder({ user_id: req.user.uuid }, Number(page));
+      const { orders, totalPage } = await OrderService.getOrder({ user_id: req.user.uuid }, Number(page));
 
       if (orders.errorMessage)
         throw {
@@ -101,10 +102,18 @@ orderRouter.get(
           message: orders.errorMessage,
         };
 
+      const getOrders = await Promise.all(
+        orders.map(async (order) => {
+          const orderItems = await OrderItemService.getOrderItem(order._id);
+          return { order, orderItems };
+        })
+      );
+
       return res.status(200).json({
         status: 200,
         message: "주문 목록 구매자 페이지입니다.",
-        data: orders,
+        data: getOrders,
+        totalPage: totalPage,
       });
     }
   })

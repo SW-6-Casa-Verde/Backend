@@ -11,6 +11,10 @@ class OrderItemService {
     return order;
   }
 
+  static async getOrderItem(orderId) {
+    const order = await OrderItem.findById(orderId);
+  }
+
   static async deleteOrderItem(orderId) {
     const order = await OrderItem.deleteManyByOrderId(orderId);
 

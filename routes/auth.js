@@ -14,7 +14,7 @@ authRouter.get("/google/callback", (req, res, next) => {
       return next({ status: 404, message: err });
     }
 
-    const { uuid, role, errorMessage } = await AccountService.googleLogin({ email: user.email, password: "GOOGLE_OAUTH" });
+    const { uuid, role, errorMessage } = await AccountService.login({ email: user.email, password: "GOOGLE_OAUTH" });
 
     if (errorMessage) {
       console.log(errorMessage);
@@ -36,7 +36,7 @@ authRouter.get("/kakao/callback", (req, res, next) => {
       return next({ status: 404, message: err });
     }
 
-    const { uuid, role, errorMessage } = await AccountService.googleLogin({ email: user.email, password: "KAKAO_OAUTH" });
+    const { uuid, role, errorMessage } = await AccountService.login({ email: user.email, password: "KAKAO_OAUTH" });
 
     if (errorMessage) {
       return next({ status: 404, message: errorMessage });

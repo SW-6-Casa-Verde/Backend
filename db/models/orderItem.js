@@ -21,7 +21,7 @@ class OrderItem {
   }
 
   static async findById({ orderId }) {
-    return await OrderItemModel.findOne({ orderId });
+    return await OrderItemModel.find({ order_id: orderId });
   }
 
   static async deleteManyByOrderId(orderId) {
