@@ -58,8 +58,8 @@ class UserService {
       const errorMessage = "사용자 조회에 실패하였습니다.";
       return { status: 400, errorMessage };
     }
-    const { uuid, email, address, detail_address, phone, name } = getUser;
-    return { uuid, email, address, detail_address, phone, name };
+    const { _id, uuid, email, address, detail_address, phone, name } = getUser;
+    return { _id, uuid, email, address, detail_address, phone, name };
   }
 
   static async setUserInfo({ currentUser, clientUuid, value }) {
