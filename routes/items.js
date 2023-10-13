@@ -48,9 +48,12 @@ itemRouter.get(
   "/:id",
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const category = req.category;
+    const filter = { id };
+    if (req.category) {
+      filter.category = req.category;
+    }
 
-    const item = await ItemService.getItem({ category, id });
+    const item = await ItemService.getItem(filter);
 
     if (item.errorMessage) {
       throw { status: 404, message: item.errorMessage };

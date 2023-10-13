@@ -29,6 +29,8 @@ class Item {
 
   // 상품 한 개
   static async findByFilter(filter) {
+    console.log(filter);
+    if (!filter.category) return await ItemModel.findOne(filter);
     return await ItemModel.findOne(filter).populate("category");
   }
 

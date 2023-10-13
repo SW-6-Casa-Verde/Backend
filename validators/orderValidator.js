@@ -8,7 +8,8 @@ const orderJoiSchema = Joi.object({
       Joi.object({
         quantity: Joi.number().min(1).required(),
         unit_price: Joi.number().required(),
-        item_id: Joi.string().hex().length(24).required(),
+        item_id: Joi.string().required(),
+        item_name: Joi.string().required(),
       })
     )
     .required(),

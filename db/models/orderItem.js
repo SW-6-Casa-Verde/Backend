@@ -13,9 +13,9 @@ class OrderItem {
   static async create(newOrderItem) {
     const addOrderItem = await OrderItemModel.create(newOrderItem);
     const addQuantity = addOrderItem.quantity;
-    const orderItem_id = addOrderItem.item_id;
+    const id = addOrderItem.item_id;
 
-    await ItemModel.findByIdAndUpdate(orderItem_id, { $inc: { sales: addQuantity } });
+    await ItemModel.findOneAndUpdate({ id }, { $inc: { sales: addQuantity } });
     return addOrderItem;
   }
 
