@@ -7,7 +7,6 @@ const orderJoiSchema = Joi.object({
     .required()
     .items(
       Joi.object({
-        id: Joi.number().required(),
         quantity: Joi.number().min(1).required(),
         unit_price: Joi.number().required(),
         item_id: Joi.string().hex().length(24).required(),
