@@ -46,14 +46,21 @@ accountRouter.post(
 
 accountRouter.get(
   "/login",
-  setBlacklist,
   asyncHandler(async (req, res, next) => {
     const token = req.headers.authorization?.split('Bearer ')[1];
     // 토큰이 없어도 에러는 아님. 
     let tokenUuid = null;
     if (token) {
       const decodedToken = await verifyJWT(token);
-      if (!decodedToken.errorMessage) tokenUuid = decodedToken.uuid;
+      const localBlackList = req.app.locals.blacklist;
+      if (localBlackList.has(decodedToken?.jti)) {
+        throw { status: 401, message: "Token revoked" };
+      }
+      if (decodedToken.errorMessage) {
+        const { status, errorMessage } = decodedToken;
+        throw { status, message: errorMessage };
+      }
+      tokenUuid = decodedToken.uuid;
     }
 
     // 토큰 값 없으면 미들웨어 종료
