@@ -2,15 +2,15 @@ import { Order, User } from "../db";
 
 class OrderService {
   // 사용자
-  static async addOrder(data, uuid) {
+  static async addOrder(data) {
     const order = await Order.create(data);
-    const user = await User.findByUserId(uuid);
+    //const user = await User.findByUserId(uuid);
 
-    if (!order || !user) {
+    if (!order) {
       return { errorMessage: "주문을 생성하는 동안 오류가 발생했습니다." };
     }
 
-    return { order, user };
+    return order;
   }
 
   // role 조건문 빼고 매개변수 수정

@@ -12,26 +12,34 @@ const { setBlacklist } = jwtLoginRequired();
 //주문하기
 orderRouter.post(
   "/",
-  setBlacklist,
   asyncHandler(async (req, res, next) => {
     const non_member_id = await UserService.getNonMemberId();
-    const objectIdString = non_member_id.toHexString();
-    const { uuid } = req.user;
+    let userObjectId = non_member_id.toHexString();
+    const { uuid, data } = req.body;
 
-    const { error, value } = await validateOrder({
-      user_id: objectIdString,
-      ...req.body,
-    });
+    if (uuid) {
+      const userInfo = await UserService.getUserInfo(uuid);
+      if (userInfo.errorMessage) {
+        throw {
+          status: 404,
+          message: userInfo.errorMessage,
+        };
+      }
+      userObjectId = userInfo._id.toHexString();
+    }
+
+    const { error } = await validateOrder(data);
 
     if (error) throw { status: 422, message: "주문정보를 다시 확인해주세요." };
 
-    const { orderItems, ...orderData } = value;
+    const { orderItems, ...orderData } = data;
 
-    const newOrder = await OrderService.addOrder(orderData, uuid);
+    const newOrder = await OrderService.addOrder({ ...orderData, user_id: userObjectId });
+
     if (newOrder.errorMessage) {
       throw {
         status: 404,
-        message: newOrder.errorMessage,
+        message: newOrder.errorMessage + "ooo",
       };
     }
 
@@ -40,7 +48,7 @@ orderRouter.post(
         // 주문 상품 생성
         const orderedItems = await OrderItemService.addOrderItem({
           ...orderItem,
-          order_id: newOrder.order._id, // 새로 생성된 주문의 _id를 사용
+          order_id: newOrder._id, // 새로 생성된 주문의 _id를 사용
         });
         return orderedItems;
       })
@@ -52,14 +60,13 @@ orderRouter.post(
         message: newOrderItems.errorMessage,
       };
     }
-    const { _id, name, pay_method, total_price } = newOrder.order;
-    const { email } = newOrder.user;
+    const { _id, email, name, pay_method, total_price } = newOrder;
 
     sendOrderConfirmationEmail(_id, email, name, pay_method, total_price);
 
     res.status(201).json({
       status: 201,
-      data: newOrder.order,
+      data: newOrder,
       items: newOrderItems,
     });
   })
