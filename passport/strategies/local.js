@@ -14,8 +14,8 @@ const local = new LocalStrategy(config, async (email, password, done) => {
 
     const localUser = await AccountService.localLogin(value);
     if (localUser.message) {
-        const { status, message } = localUser;
-        throw { status, message };
+      const { status, message } = localUser;
+      throw { status, message };
     }
     // req.user로 정보가 들어감 (이름이 user인 이름은 passport 규칙)
     done(null, localUser);
