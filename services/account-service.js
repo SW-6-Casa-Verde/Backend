@@ -1,4 +1,4 @@
-import request from "request";
+import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
 import { userRole } from "../constants"
 import { User } from "../db";
@@ -9,16 +9,38 @@ class AccountService {
 
     const user = await User.findByEmail(email);
 
+    if (!user || user.uuid === "guest_id") {
+      return { status: 401, message };
+    }
+
     if (user) return user;
 
     return await User.create({
       uuid: uuidv4(),
-      name,
+      name: "",
       email,
       password: "KAKAO_OAUTH",
       role: userRole.USER,
       is_sns_user: true,
     });
+  }
+
+  static async localLogin(user) {
+    const { email, password } = user;
+    const errorMessage = "로그인에 실패하였습니다.";
+
+    const isEmailMatch = await User.findByEmail(email);
+    if (!isEmailMatch || isEmailMatch?.uuid === "guest_id") {
+      return { status: 401, message: errorMessage };
+    }
+
+    const isPasswordMatch = bcrypt.compareSync(password, isEmailMatch.password);
+    if (!isPasswordMatch) {
+      return { status: 401, message: errorMessage };
+    }
+
+    const { uuid, role } = isEmailMatch;
+    return { uuid, role };
   }
 
   static async socialNaverLogin(profile) {
@@ -46,7 +68,7 @@ class AccountService {
   }
 
   static async logout({ token, localBlackList }) {
-    if (token) return localBlackList.add(token);
+    if (token) return localBlackList.add(token.jti);
   }
 }
 

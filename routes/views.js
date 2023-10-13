@@ -25,7 +25,9 @@ viewsRouter.use("/order-completed", serveStatic("order-completed"));
 viewsRouter.use("/", serveStatic(""));
 
 function serveStatic(resource, subFolder) {
-  const resourcePath = path.join(__dirname, subFolder ? `../views/${subFolder}/${resource}` : `../views/${resource}`);
+  const resourcePath = path.join(__dirname, 
+    subFolder ? `../views/${subFolder}/${resource}` : `../views/${resource}`
+  );
   const option = { index: `${resource}.html` };
 
   return express.static(resourcePath, option);

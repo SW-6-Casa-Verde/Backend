@@ -1,16 +1,18 @@
 import jwt from "jsonwebtoken";
 import urlSafeBase64 from "./urlSafeBase64";
 import dotenv from "dotenv";
+import { v4 as token_id } from "uuid";
 dotenv.config();
 
 const JWT_SECRET_KEY = urlSafeBase64(process.env.JWT_KEY);
 const option = {
-  expiresIn: "1h",
+  expiresIn: '6h',
   algorithm: "HS256",
 };
 
 // JWT 생성
 async function createJWT(payload) {
+  payload.jti = token_id();
   return jwt.sign(payload, JWT_SECRET_KEY, option);
 }
 

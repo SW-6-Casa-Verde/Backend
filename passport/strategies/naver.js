@@ -4,7 +4,7 @@ import { AccountService } from "../../services";
 const config = {
     clientID: process.env.naver_clientID,
     clientSecret: process.env.naver_clientSecret,
-    callbackURL: `${process.env.DEV_HOST}/api/auth/naver/callback`,
+    callbackURL: '/api/auth/naver/callback',
 }
 
 const naver = new NaverStrategy(config, 
