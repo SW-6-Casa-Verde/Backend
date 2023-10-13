@@ -13,7 +13,7 @@ export default function jwtLoginRequired() {
     const decode = await verifyJWT(token);
     const localBlackList = req.app.locals.blacklist;
     if (localBlackList.has(decode?.jti)) {
-      throw { status: 401, message: "Token revoked" };
+      return next({ status: 401, message: "Token revoked" });
     }
 
     if (decode.errorMessage) {

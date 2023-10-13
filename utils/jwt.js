@@ -6,7 +6,7 @@ dotenv.config();
 
 const JWT_SECRET_KEY = urlSafeBase64(process.env.JWT_KEY);
 const option = {
-  expiresIn: '1h',
+  expiresIn: '6h',
   algorithm: "HS256",
 };
 
