@@ -75,7 +75,7 @@
 |                                                                                                                               |
 | ![7장바구니](https://github.com/SW-6-Casa-Verde/Casa-Verde/assets/92137309/0e1f0f28-7261-412f-8948-da54c094b53d)          | ![8결제](https://github.com/SW-6-Casa-Verde/Casa-Verde/assets/92137309/f991ef53-53a3-496d-b209-7fc2f6df071f)                 |
 | 장바구니                                                                                                                      | 결제                                                                                                                             |
-| ![9일반회원-주문조회](https://github.com/SW-6-Casa-Verde/Casa-Verde/assets/92137309/cc7b5b4e-09e6-4f7b-8b13-9f0f6010ba20) | ![10일반회원-정보관리](https://github.com/SW-6-Casa-Verde/Casa-Verde/assets/92137309/e07070e2-ac0a-4ff4-b48e-991dc0fe2953)   |
+| ![9일반회원-주문조회](https://github.com/SW-6-Casa-Verde/Casa-Verde/assets/92137309/4a05f744-98ea-40ec-8671-f7547acfe05d) | ![10일반회원-정보관리](https://github.com/SW-6-Casa-Verde/Casa-Verde/assets/92137309/e07070e2-ac0a-4ff4-b48e-991dc0fe2953)   |
 | 일반 회원 - 주문 관리                                                                                                         | 일반 회원 - 정보 관리                                                                                                            |
                                                                                                          
 
