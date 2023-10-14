@@ -32,7 +32,7 @@ class OrderItem {
       const itemId = orderItem.item_id;
       const cancelQuantity = orderItem.quantity;
 
-      await ItemModel.findByIdAndUpdate(itemId, { $inc: { sales: -cancelQuantity } });
+      await ItemModel.findByOneAndUpdate({ id: itemId }, { $inc: { sales: -cancelQuantity } });
     }
 
     return await OrderItemModel.deleteMany({ order_id: orderId });
