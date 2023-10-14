@@ -17,7 +17,6 @@
 - 회원 정보 수정 기능 가능
 - <details><summary>시연 영상</summary>
 
-  ![1회원가입](https://user-images.githubusercontent.com/104059932/211264278-a1765e81-9deb-473f-8ad8-acd70996bcaa.gif)
   </details>
 
 ### 🏷️ 로그인
@@ -26,7 +25,6 @@
 - JWT 와 SessionStoragy를 사용한 로그인 정보 저장
 - <details><summary>시연 영상</summary>
 
-  ![2로그인_-비밀번호-찾기](https://user-images.githubusercontent.com/104059932/211264388-c1c40434-db53-4d57-b9bb-c56bc409dfba.gif)
   </details>
 
 ### 🏷️ 홈
@@ -35,7 +33,6 @@
 - 위 nav 바의 카테고리 클릭 시 카테고리별 상품 조회 가능
 - <details><summary>시연 영상</summary>
 
-  ![3홈,검색,카테고리](https://user-images.githubusercontent.com/104059932/211264495-9ded7336-ff2b-49de-bc13-240d52d699c4.gif)
 
   </details>
 
@@ -48,7 +45,6 @@
 - 결제 후 가입한 이메일로 구매 내역 메일 전송
 - <details><summary>시연 영상</summary>
 
-  ![4주문_결제](https://user-images.githubusercontent.com/104059932/211264524-3d5ed53d-1632-4561-981f-c6ec5b53c908.gif)
 
   </details>
 
@@ -99,24 +95,6 @@
 <img src="https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=Node.js&logoColor=white"/> <img src="https://img.shields.io/badge/express-000000?style=flat-square&logo=express&logoColor=white"/> <img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=MongoDB&logoColor=white"/>
 <img src="https://img.shields.io/badge/NGINX-009639?style=flat-square&logo=NGINX&logoColor=white"/> <img src="https://img.shields.io/badge/PM2-2B037A?style=flat-square&logo=PM2&logoColor=white"/>
 
-<br/>
-<br/>
-
-## ✅ 기획
-
-### 1. 정보구조도(다이어그램)
-
-<img src="https://user-images.githubusercontent.com/104059932/211264767-84d028f1-c96b-448e-972a-ee4e32e51522.png" width="700px" />
-
-### 2. [와이어 프레임](https://www.figma.com/file/33a0PITPQ3GaelQ2EgduNK/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8?node-id=1%3A2&t=NXWFCEgiHzGDyfV3-1)
-
-### 2. [API 명세서](https://jiwoo84.notion.site/API-a1a1b003fbda4db885bebd36d528b7d0)
-
-<br/>
-
-## ✅ 인프라 구조
-
-<img src="https://i.ibb.co/9tGxmx0/image.png" width=500 />
 
 <br/>
 
