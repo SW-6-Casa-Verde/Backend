@@ -1,24 +1,28 @@
 import { verifyJWT } from "../utils/jwt";
 
 export default function jwtLoginRequired() {
-  const blacklist = [];
+  const blacklist = new Set();
 
   // 쿠키 블랙리스트 등록
   async function setBlacklist(req, res, next) {
-    const token = req.cookies.token;
-    const decode = await verifyJWT(token);
-    const localBlackList = req.app.locals.blacklist;
-
-    if (decode.errorMessage || localBlackList.includes(token)) {
-      // 바로 돌려보낸다면?
-      // return res.status(401).redirect("/");
-      const { status, errorMessage } = decode;
-      next({ status, message: errorMessage });
+    const token = req.headers.authorization?.split('Bearer ')[1];
+    if (!token) {
+      return next({ status: 401, message: "인증되지 않은 사용자" });
     }
 
-    const { role, uuid } = decode;
-    req.user = { role, uuid };
-    req.token = token;
+    const decode = await verifyJWT(token);
+    const localBlackList = req.app.locals.blacklist;
+    if (localBlackList.has(decode?.jti)) {
+      return next({ status: 401, message: "Token revoked" });
+    }
+
+    if (decode.errorMessage) {
+      const { status, errorMessage } = decode;
+      return next({ status, message: errorMessage });
+    }
+
+    const { role, uuid, jti } = decode;
+    req.user = { role, uuid, jti };
 
     next();
   }

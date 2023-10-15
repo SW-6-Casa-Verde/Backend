@@ -11,12 +11,12 @@ class Item {
 
   // READ
   // 카테고리별 상품
-  static async findByCategory({ category, page, perPage, sortQuery }) {
-    const query = category ? { category } : {};
+  static async findByCategory({ category, page, perPage, sortFilter }) {
+    const filter = category ? { category } : {};
     const [total, items] = await Promise.all([
-      ItemModel.find(query).countDocuments({}),
-      ItemModel.find(query)
-        .sort(sortQuery)
+      ItemModel.find(filter).countDocuments({}),
+      ItemModel.find(filter)
+        .sort(sortFilter)
         .skip(perPage * (page - 1))
         .limit(perPage)
         .populate("category"),
@@ -28,18 +28,20 @@ class Item {
   }
 
   // 상품 한 개
-  static async findByQuery(query) {
-    return await ItemModel.findOne(query).populate("category");
+  static async findByFilter(filter) {
+    console.log(filter);
+    if (!filter.category) return await ItemModel.findOne(filter);
+    return await ItemModel.findOne(filter).populate("category");
   }
 
   // UPDATE
-  static async updateByQuery(findQuery, updateQuery) {
-    return await ItemModel.findOneAndUpdate(findQuery, updateQuery, { new: true }).populate("category");
+  static async updateByFilter(filter, data) {
+    return await ItemModel.findOneAndUpdate(filter, data, { new: true }).populate("category");
   }
 
   // DELETE
-  static async deleteByQuery(query) {
-    return await ItemModel.findOneAndDelete(query, { new: true }).populate("category");
+  static async deleteByFilter(filter) {
+    return await ItemModel.findOneAndDelete(filter, { new: true }).populate("category");
   }
 }
 

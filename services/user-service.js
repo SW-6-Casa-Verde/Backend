@@ -1,6 +1,7 @@
-import { User } from "../db";
 import bcrypt from "bcrypt";
+import { User } from "../db";
 import { v4 as uuidv4 } from "uuid";
+import { userRole } from "../constants";
 
 class UserService {
   static async checkEmailDuplicate(email) {
@@ -20,27 +21,27 @@ class UserService {
       const errorMessage = isEmailUnique.errorMessage;
       return { status: 409, errorMessage };
     }
-
     // role 검증
     // 클라이언트에서 받아올 값은 아니지만 잘못된 값 처리를 위한 로직
     if (typeof newUser.role !== "undefined") {
       return { status: 403, errorMessage: "Invalid User Role." };
     }
-
     // 비밀번호 해쉬
     const hashedPassword = await bcrypt.hash(password, 10);
-    let { address, phone, name } = newUser;
-    name = !name ? undefined : name;
+    let { address = "", detail_address = "", phone = "", name = undefined, is_sns_user } = newUser;
 
     const validatedUser = {
       uuid: uuidv4(),
       email,
       password: hashedPassword,
       address,
+      detail_address,
       phone,
       name,
-      role: "USER",
+      role: userRole.USER,
+      is_sns_user,
     };
+
     const createNewUser = await User.create(validatedUser);
     // createNewUser error check
     if (!createNewUser) {
@@ -53,18 +54,19 @@ class UserService {
 
   static async getUserInfo(userUuid) {
     const getUser = await User.findByUserId(userUuid);
+
     if (!getUser) {
       const errorMessage = "사용자 조회에 실패하였습니다.";
       return { status: 400, errorMessage };
     }
-    const { uuid, email, address, phone, name } = getUser;
-    return { uuid, email, address, phone, name };
+    const { _id, uuid, email, address, detail_address, phone, name, role } = getUser;
+    return { _id, uuid, email, address, detail_address, phone, name, role };
   }
 
-  static async setUserInfo({ uuid, value }) {
+  static async setUserInfo({ currentUser, clientUuid, value }) {
     const errorMessage = "사용자 정보 수정에 실패하였습니다.";
 
-    if ("role" in value && value.role !== "USER") {
+    if (!(currentUser.role === userRole.ADMIN) && "role" in value && value.role !== "USER") {
       return { status: 400, errorMessage };
     }
 
@@ -74,10 +76,10 @@ class UserService {
     }
 
     const updatedUserInfo = await User.updateByUserId({
-      uuid,
+      uuid: clientUuid,
       updateData: value,
     });
-    
+
     if (!updatedUserInfo) {
       return { status: 400, errorMessage };
     }
@@ -85,13 +87,22 @@ class UserService {
     return updatedUserInfo;
   }
 
-  static async deleteUser(uuid) {
-    const delUser = await User.deleteByUserId(uuid);
+  static async deleteUser(userUuid) {
+    const delUser = await User.deleteByUserId(userUuid);
     if (!delUser) {
       const errorMessage = "사용자 삭제에 실패하였습니다.";
       return { status: 400, errorMessage };
     }
     return delUser;
+  }
+
+  static async getNonMemberId() {
+    const nonMember = await User.findByUserId("guest_id");
+    if (!nonMember) {
+      const errorMessage = "비회원 유저가 없습니다.";
+      return { status: 404, errorMessage };
+    }
+    return nonMember._id;
   }
 }
 

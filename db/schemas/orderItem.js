@@ -1,12 +1,8 @@
 import { Schema } from "mongoose";
+import orderItemId from "./types/short-id";
 
 const OrderItemSchema = new Schema({
-  id: {
-    type: Number,
-    required: true,
-    unique: true,
-    index: true,
-  },
+  id: orderItemId,
   quantity: {
     type: Number,
     required: true,
@@ -16,6 +12,10 @@ const OrderItemSchema = new Schema({
     required: true,
   },
   item_id: {
+    type: String,
+    required: true,
+  },
+  item_name: {
     type: String,
     required: true,
   },

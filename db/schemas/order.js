@@ -1,13 +1,6 @@
 import { Schema } from "mongoose";
 import orderId from "./types/short-id";
-
-const orderStatus = [
-  "ORDER_CONFIRMED",
-  "PREPARING_FOR_SHIPMENT",
-  "SHIPPED",
-  "DELIVERED",
-];
-const payMethod = ["CARD", "BANK_TRANSFER"];
+import { orderStatusEnum, payMethodEnum } from "../../constants";
 
 const OrderSchema = new Schema(
   {
@@ -20,9 +13,16 @@ const OrderSchema = new Schema(
       type: String,
       required: true,
     },
+    email: {
+      type: String,
+      required: true,
+    },
     address: {
       type: String,
       required: true,
+    },
+    detail_address: {
+      type: String,
     },
     phone: {
       type: String,
@@ -33,13 +33,13 @@ const OrderSchema = new Schema(
     },
     pay_method: {
       type: String,
-      enum: payMethod,
+      enum: payMethodEnum,
       default: "CARD",
       required: true,
     },
     order_status: {
       type: String,
-      enum: orderStatus,
+      enum: orderStatusEnum,
       default: "ORDER_CONFIRMED",
       required: true,
     },
@@ -54,4 +54,4 @@ const OrderSchema = new Schema(
   }
 );
 
-export default OrderSchema;
+export { OrderSchema };

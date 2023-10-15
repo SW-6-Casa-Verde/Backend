@@ -20,11 +20,12 @@ const UserSchema = new Schema({
   },
   address: {
     type: String,
-    required: true,
+  },
+  detail_address: {
+    type: String,
   },
   phone: {
     type: String,
-    required: true,
   },
   name: {
     type: String,
@@ -34,6 +35,10 @@ const UserSchema = new Schema({
     type: String,
     enum: [USER, ADMIN],
   },
+  is_sns_user: {
+    type: Boolean,
+    default: () => false
+  }
 });
 
 export default UserSchema;
